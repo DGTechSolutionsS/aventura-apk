@@ -1,0 +1,16 @@
+{
+  "name": "aventura-apk",
+  "version": "3.9.1",
+  "private": true,
+  "description": "Wrapper Capacitor do app Aventura com Jesus (br.com.aventuracomjesus)",
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/app": "^6.0.2",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor/local-notifications": "^6.1.0",
+    "@capacitor/splash-screen": "^6.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.2.0"
+  }
+}

@@ -1,0 +1,1129 @@
+/* ===================== Theo App — protótipo (tema dark navy + dourado) ===================== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --navy-0:#0b1426; --navy-1:#0f1c33; --navy-2:#16273f; --navy-3:#1e3252;
+  --line:#26395c; --gold:#f0c14b; --gold-d:#caa233; --ink:#eaf0fb; --ink-soft:#9fb0cc;
+  --red:#e0746a; --ok:#6fae84;
+
+  /* ===== Sistema premium reutilizável (criado na tela do Theodore) ===== */
+  /* escala de espaçamento base 4px */
+  --s1:4px; --s2:8px; --s3:12px; --s4:16px; --s5:20px; --s6:24px; --s7:32px; --s8:40px;
+  /* raios */
+  --r-sm:12px; --r-md:16px; --r-lg:22px; --r-xl:28px; --r-pill:999px;
+  /* durações + easing */
+  --d-fast:120ms; --d-base:220ms; --d-slow:360ms;
+  --ease-out:cubic-bezier(.2,.8,.2,1); --ease-bounce:cubic-bezier(.34,1.56,.64,1);
+  /* subtema AZUL do Theodore (derivado do quarto) */
+  --theo-sky-1:#aacdf2; --theo-sky-2:#9dbbee;
+  --theo-ink:#1d4067; --theo-ink-soft:#5e7da3;
+  --theo-cream:#fdf3e3; --theo-surface:#ffffff;
+  --theo-cyan:#6bcad6; --theo-cyan-d:#46b3c2; --theo-gold:#f0c14b;
+  /* azul de AÇÃO (o mais usado nos botões: alimentar, resgatar, tocar, abas de roupas) */
+  --theo-action:#6bcad6;
+  --theo-sh-sm:0 3px 8px rgba(40,70,120,.14);
+  --theo-sh-md:0 7px 18px rgba(40,70,120,.18);
+  --theo-sh-lg:0 14px 30px rgba(40,70,120,.22);
+  --theo-sh-press:0 2px 5px rgba(40,70,120,.18);
+}
+html,body{margin:0;height:100%}
+body{
+  font-family:'Lato',system-ui,-apple-system,sans-serif;
+  background:#05080f;color:var(--ink);
+  display:flex;justify-content:center;
+}
+h1.t,.sec-t,.cscreen h2,.detail .info h2,.fcard .ti,.btn,.tcard .ti,.plcard .ti,
+.mcard .lb,.catbtn .ti,.ovtop b{font-family:'Quicksand','Lato',sans-serif}
+button{font-family:inherit;cursor:pointer}
+img{display:block}
+
+/* moldura do app (estilo telefone) */
+#app{
+  width:100%;max-width:440px;min-height:100vh;position:relative;display:flex;flex-direction:column;
+  background:radial-gradient(120% 60% at 50% 0%,var(--navy-2),var(--navy-0) 70%);
+  overflow:hidden;
+}
+
+/* ---------- header global ---------- */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;gap:10px;z-index:5}
+.hdr .prof{display:flex;align-items:center;gap:8px;background:#fff;border:none;
+  border-radius:99px;padding:4px 18px 4px 4px;color:#1f4d63;font-weight:800;font-size:15px;
+  box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.hdr .prof .av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-size:18px;
+  background:#dceeff;border:none}
+.hdr .hr{display:flex;align-items:center;gap:8px}
+.hdr .streak{display:flex;align-items:center;gap:5px;font-weight:800;color:var(--gold-d);font-size:15px;
+  background:#fff;border-radius:99px;padding:7px 13px;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+.hdr .ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-size:18px;
+  background:#fff;border:none;color:#1f4d63;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.18)}
+
+/* ---------- área de tela rolável ---------- */
+.screen{flex:1;overflow-y:auto;padding:4px 16px 150px;position:relative;z-index:1}
+.screen::-webkit-scrollbar{display:none}
+h1.t{font-size:24px;font-weight:800;margin:10px 2px 4px}
+.sec-t{font-size:18px;font-weight:800;margin:22px 2px 10px;display:flex;align-items:center;justify-content:space-between}
+.muted{color:var(--ink-soft)}
+
+/* ---------- carrossel horizontal ---------- */
+.hscroll{display:flex;align-items:flex-start;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 6px;margin:0 -2px}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll > *{scroll-snap-align:start;flex:none}
+
+/* card featured (grande) */
+.fcard{width:270px;height:330px;border-radius:22px;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;justify-content:flex-end;color:#fff;border:none;text-align:left;padding:16px}
+.fcard .cover{position:absolute;inset:0;display:grid;place-items:center;font-size:96px}
+.fcard .scrim{position:absolute;inset:0;background:linear-gradient(to top,rgba(7,12,22,.92),rgba(7,12,22,.15) 55%,transparent)}
+.fcard .badge,.tcard .badge,.cgcard .badge{position:relative;z-index:2}
+.badge{display:inline-block;align-self:flex-start;font-size:11px;font-weight:800;color:#0b1426;
+  background:var(--gold);border-radius:99px;padding:3px 10px;margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.badge.alt{background:#7cc4e0}
+.fcard .ti{position:relative;z-index:2;font-size:20px;font-weight:800;line-height:1.15;margin:0 0 6px}
+.fcard .su{position:relative;z-index:2;font-size:12.5px;color:rgba(255,255,255,.82);line-height:1.4}
+
+/* card de missão — bege/cream igual ao app real */
+.mcard{width:150px;height:170px;border-radius:18px;overflow:hidden;position:relative;border:none;
+  background:#fef3e0;color:#3a2c14;text-align:left;padding:0;box-shadow:0 2px 6px rgba(0,0,0,.14)}
+.mcard.cur{outline:3px solid var(--gold);outline-offset:-3px}
+.mcard .cv{height:104px;display:grid;place-items:center;font-size:46px}
+.mcard .lb{padding:9px 11px;font-size:13.5px;font-weight:800;line-height:1.2;color:#3a2c14}
+.mcard .rw{position:absolute;top:8px;right:8px;background:#fff;border-radius:99px;
+  font-size:11px;font-weight:800;color:var(--gold-d);padding:3px 8px;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+
+/* grid 2 colunas de conteúdo (Explore / continue routine) */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:6px}
+.tcard{border-radius:18px;overflow:hidden;background:var(--navy-2);color:var(--ink);text-align:left;
+  border:1px solid var(--line);position:relative;padding:0;display:flex;flex-direction:column}
+.tcard .cv{aspect-ratio:1/1;display:grid;place-items:center;font-size:58px;position:relative}
+.tcard .heart{position:absolute;top:9px;right:9px;z-index:2;width:30px;height:30px;border-radius:50%;border:none;
+  background:rgba(11,20,38,.55);color:#fff;font-size:15px;display:grid;place-items:center}
+.tcard .heart.on{color:var(--red)}
+.hsvg{width:18px;height:18px;display:block}
+.iconbtn .hsvg{width:20px;height:20px}
+.iconbtn.on,.meetcard-heart.on{color:var(--red)}
+.tcard .bd{padding:9px 11px 12px}
+.tcard .ti{font-size:14px;font-weight:800;line-height:1.2;margin:0 0 3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.4em}
+.tcard .ty{font-size:11.5px;font-weight:700;color:var(--ink-soft)}
+.tcard .lock{position:absolute;top:9px;left:9px;z-index:2;font-size:13px;background:rgba(11,20,38,.78);
+  border:1px solid rgba(240,193,75,.55);border-radius:99px;padding:3px 8px;display:grid;place-items:center}
+
+/* banner de categoria (Explore) — full-width com ilustração grande */
+.catbtn{display:block;width:100%;border:none;border-radius:18px;overflow:hidden;
+  background:var(--navy-2);color:#fff;padding:0;margin-bottom:14px;position:relative;aspect-ratio:16/6;text-align:left;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.catbtn .cv{position:absolute;inset:0;display:block;font-size:38px}
+.catbtn .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.catbtn .ti{position:absolute;left:22px;top:50%;transform:translateY(-50%);font-family:'Quicksand',sans-serif;font-size:24px;font-weight:800;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.6);z-index:2}
+
+/* busca */
+.search{display:flex;align-items:center;gap:9px;background:var(--navy-2);border:1px solid var(--line);
+  border-radius:14px;padding:11px 14px;margin:8px 0 4px;color:var(--ink-soft)}
+.search input{flex:1;border:none;background:transparent;color:var(--ink);font-size:15px;outline:none}
+
+/* botões */
+.btn{width:100%;border:none;border-radius:15px;padding:16px;font-size:16.5px;font-weight:800;
+  background:var(--gold);color:#0b1426;box-shadow:0 8px 22px rgba(240,193,75,.25)}
+.btn.ghost{background:rgba(255,255,255,.07);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.sm{padding:12px;font-size:15px}
+.row-btn{display:flex;gap:10px}
+
+/* ---------- tab bar ---------- */
+.tabbar{position:absolute;left:0;right:0;bottom:0;z-index:8;display:flex;justify-content:space-around;
+  padding:10px 6px calc(14px + env(safe-area-inset-bottom));
+  background:linear-gradient(180deg,rgba(11,20,38,.55),rgba(11,20,38,.92) 50%);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-top-left-radius:18px;border-top-right-radius:18px}
+.tab{flex:1;border:none;background:transparent;color:rgba(255,255,255,.55);display:flex;flex-direction:column;
+  align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:5px 0}
+.tab .ti{font-size:22px;line-height:1}
+.tab.on{color:#fff}
+.tab.on img.ico{opacity:1;filter:none}
+.tab img.ico{opacity:.55}
+
+/* ---------- mini-player ---------- */
+.mini{position:absolute;left:10px;right:10px;bottom:74px;z-index:9;display:none;align-items:center;gap:11px;
+  background:var(--navy-3);border:1px solid var(--line);border-radius:16px;padding:8px 12px 8px 8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.mini.show{display:flex}
+.mini .cv{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;font-size:22px;flex:none}
+.mini .ti{flex:1;font-size:13.5px;font-weight:700;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mini .pp{width:38px;height:38px;border-radius:50%;border:none;background:var(--gold);color:#0b1426;font-size:16px;flex:none}
+.mini .up{background:transparent;border:none;color:var(--ink-soft);font-size:18px;flex:none}
+
+/* ---------- overlay / sheets (fluxo de conteúdo, player, etc.) ---------- */
+.ov{position:absolute;inset:0;z-index:20;background:var(--navy-0);display:flex;flex-direction:column;
+  animation:slideup .28s ease}
+@keyframes slideup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.ov .ovtop{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:relative;z-index:3}
+.iconbtn{width:40px;height:40px;border-radius:50%;border:none;background:rgba(11,20,38,.5);color:#fff;font-size:18px;
+  display:grid;place-items:center;backdrop-filter:blur(4px)}
+.ov .body{flex:1;overflow-y:auto;display:flex;flex-direction:column}
+.ov .body::-webkit-scrollbar{display:none}
+
+/* detalhe de conteúdo */
+.detail .bigcover{position:absolute;inset:0;display:grid;place-items:center;font-size:150px}
+.detail .scrim{position:absolute;inset:0;background:linear-gradient(to top,var(--navy-0) 8%,rgba(11,20,38,.35) 45%,rgba(11,20,38,.55))}
+.detail .info{position:relative;z-index:2;margin-top:auto;padding:0 22px calc(26px + env(safe-area-inset-bottom));text-align:center}
+.detail .info .ty{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.detail .info h2{font-size:26px;font-weight:800;margin:0 0 4px}
+.detail .info .dur{color:var(--ink-soft);font-size:14px;margin-bottom:16px}
+.detail .chev{font-size:20px;color:var(--ink-soft);margin-bottom:10px}
+.detail .desc{color:var(--ink-soft);font-size:14.5px;line-height:1.55;margin:0 auto 18px;max-width:340px}
+
+/* player imersivo */
+.player .full{position:absolute;inset:0;display:grid;place-items:center;font-size:170px;animation:breathe 6s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.player .vscrim{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(11,20,38,.5),transparent 30%,transparent 70%,rgba(11,20,38,.75))}
+.player .pbottom{position:relative;z-index:2;margin-top:auto;padding:0 24px calc(34px + env(safe-area-inset-bottom))}
+.player .pt-title{text-align:center;font-weight:800;font-size:18px;margin-bottom:14px}
+.pbar{height:5px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden}
+.pbar > i{display:block;height:100%;width:0;background:var(--gold);transition:width .25s linear}
+
+/* MODO TEXTO — overlay rolável com o roteiro */
+#scriptov{position:absolute;inset:0;z-index:25;display:none;flex-direction:column;
+  background:radial-gradient(120% 60% at 50% 0%,var(--navy-2),var(--navy-0) 70%)}
+#scriptov.show{display:flex;animation:slideup .28s ease}
+.scriptov-top{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;flex:0 0 auto}
+.scriptov-top b{font-family:'Quicksand','Lato',sans-serif;font-size:17px;font-weight:800}
+.scriptov-body{flex:1;overflow-y:auto;padding:6px 22px calc(40px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling:touch}
+.scriptov-body::-webkit-scrollbar{display:none}
+.scriptov-ty{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px;text-align:center}
+.scriptov-title{font-family:'Quicksand','Lato',sans-serif;font-size:24px;font-weight:800;
+  text-align:center;margin:0 0 18px;line-height:1.2}
+.scriptov-text{font-size:16.5px;line-height:1.72;color:var(--ink);max-width:520px;margin:0 auto}
+.scriptov-text p{margin:0 0 16px}
+.scriptov-text p:first-child{font-size:17.5px;color:var(--ink)}
+/* ===== Leitura do Dia — "Página de Luz" ===== */
+.ov.reading{background:var(--navy-0)}
+.rd-progress{height:3px;background:var(--line);flex:0 0 auto;z-index:4}
+.rd-progress i{display:block;height:100%;width:0;background:var(--gold);transition:width .12s linear}
+.rd-top{display:flex;align-items:center;justify-content:space-between;padding:6px 10px 0;flex:0 0 auto;z-index:3}
+.rd-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;width:100%;max-width:392px;margin:0 auto;padding:2px var(--s6) calc(var(--s8) + env(safe-area-inset-bottom))}
+.rd-body::-webkit-scrollbar{display:none}
+.rd-star{text-align:center;color:var(--gold);font-size:14px;margin-top:var(--s6);animation:rdBreathe 4.5s ease-in-out infinite}
+.rd-hero{position:relative;margin:var(--s3) 0 0;border-radius:20px;overflow:hidden;height:200px;box-shadow:var(--theo-sh-md)}
+.rd-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.rd-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,26,47,0) 40%,rgba(14,26,47,.55) 100%)}
+.rd-hero-badge{position:absolute;left:12px;bottom:11px;z-index:2;font-family:'Quicksand',sans-serif;font-weight:700;font-size:12px;letter-spacing:.05em;color:#fff;background:rgba(11,20,38,.55);border:1px solid rgba(240,193,75,.4);padding:5px 11px;border-radius:999px;backdrop-filter:blur(3px)}
+@keyframes rdBreathe{0%,100%{opacity:.55;transform:scale(1)}50%{opacity:.9;transform:scale(1.08)}}
+.rd-eyebrow{text-align:center;font-family:'Quicksand',sans-serif;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-d);margin-top:var(--s3)}
+.rd-title{text-align:center;font-family:'Quicksand',sans-serif;font-weight:600;font-size:24px;line-height:1.25;color:var(--ink);margin:var(--s3) 0 0;text-wrap:balance}
+.rd-verse{position:relative;z-index:0;text-align:center;font-family:'Quicksand',sans-serif;font-weight:600;font-style:italic;font-size:23px;line-height:1.45;color:var(--ink);max-width:340px;margin:var(--s6) auto 0;text-wrap:balance}
+.rd-verse::before{content:'\201C';position:absolute;top:-26px;left:-2px;z-index:-1;font-family:'Quicksand',sans-serif;font-weight:700;font-size:58px;color:var(--gold);opacity:.28}
+.rd-vref{text-align:center;font-family:'Lato',sans-serif;font-weight:500;font-size:13px;letter-spacing:.02em;color:var(--gold-d);margin-top:var(--s3)}
+.rd-audio-wrap{margin:var(--s5) auto 0;max-width:340px;text-align:center}
+.rd-audio{width:100%;height:42px}
+.rd-audio-soon{display:none;font-size:12.5px;color:var(--ink-soft)}
+.rd-audio-wrap.noaud .rd-audio{display:none}
+.rd-audio-wrap.noaud .rd-audio-soon{display:block}
+.rd-hr{width:48px;height:1px;margin:var(--s6) auto;background:linear-gradient(90deg,transparent,var(--gold-d),transparent);opacity:.55}
+.rd-read{font-family:'Lato',sans-serif;font-weight:400;font-size:17px;line-height:1.78;color:var(--ink)}
+.rd-read p{margin:0 0 var(--s4)}
+.rd-read p:last-child{margin-bottom:0}
+.rd-read .rd-lead::first-letter{float:left;font-family:'Quicksand',sans-serif;font-weight:800;font-size:3.2em;line-height:.8;color:var(--gold-d);padding-right:8px;margin-top:4px}
+.rd-pray .rd-lbl{text-align:center;font-family:'Quicksand',sans-serif;font-weight:700;font-size:11px;letter-spacing:.18em;text-transform:uppercase;margin-bottom:var(--s3);color:var(--ok)}
+.rd-pray blockquote{margin:0;border-left:1px solid var(--ok);padding-left:var(--s4);font-family:'Lato',sans-serif;font-style:italic;font-size:16.5px;line-height:1.8;color:var(--ink)}
+.rd-bless{text-align:center;font-size:13px;color:var(--ink-soft);margin-top:var(--s7);margin-bottom:var(--s5)}
+.rd-done{width:100%;background:var(--gold);color:var(--navy-0);font-family:'Quicksand',sans-serif;font-weight:700;font-size:16px;height:52px;border-radius:var(--r-pill);box-shadow:var(--theo-sh-md)}
+@media (prefers-reduced-motion:reduce){.rd-star{animation:none;opacity:.8}.rd-progress i{transition:none}}
+
+/* ===== Player de VÍDEO (Cloudflare Stream) ===== */
+.ov.video{background:#05080f}
+.vid-top b{font-family:'Quicksand','Lato',sans-serif;font-size:16px;font-weight:800;flex:1;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 8px}
+.vidscroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.vidscroll::-webkit-scrollbar{display:none}
+.vidbox{position:relative;width:100%;padding-top:56.25%;background:#000}
+.vidbox iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.vid-meta{padding:18px 20px calc(24px + env(safe-area-inset-bottom))}
+.vid-meta .ty{font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px}
+.vid-meta h2{font-family:'Quicksand','Lato',sans-serif;font-size:22px;font-weight:800;margin:0 0 8px;color:var(--ink)}
+.vid-meta .desc{color:var(--ink-soft);font-size:14.5px;line-height:1.55;margin:0 0 18px}
+.vid-done{width:100%}
+
+/* tela centralizada genérica (rating, streak, retenção, encouragement) */
+.cscreen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:30px 26px calc(30px + env(safe-area-inset-bottom));gap:6px}
+.cscreen .big{font-size:84px;line-height:1}
+.cscreen h2{font-size:24px;font-weight:800;margin:8px 0 2px}
+.cscreen p{color:var(--ink-soft);font-size:15px;line-height:1.5;margin:4px 0;max-width:330px}
+.cscreen .verse{font-style:italic;color:var(--ink-soft);font-size:14.5px;line-height:1.55;max-width:320px}
+.cscreen .foot{margin-top:auto;width:100%;display:flex;flex-direction:column;gap:10px}
+
+/* estrelas de rating */
+.stars{display:flex;gap:10px;font-size:38px;color:#3a4a6b;margin:6px 0}
+.stars .s.on{color:var(--gold)}
+
+/* card de conteúdo concluído (rating/share) */
+.donecard{display:flex;align-items:center;gap:12px;background:var(--navy-2);border:1px solid var(--line);
+  border-radius:16px;padding:12px;width:100%;text-align:left}
+.donecard .cv{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;font-size:24px;flex:none}
+.donecard .share{margin-left:auto;background:transparent;border:none;color:var(--gold);font-size:22px}
+
+/* tracker de streak (semana) */
+.weekrow{display:flex;gap:9px;margin:10px 0 4px}
+.weekrow .d{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:12px;color:var(--ink-soft)}
+.weekrow .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;
+  background:var(--navy-2);border:1px solid var(--line)}
+.weekrow .d.on .dot{background:rgba(240,193,75,.18);border-color:var(--gold)}
+
+/* stats de prova social (retenção) */
+.proof{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin:8px 0}
+.proof .p{background:var(--navy-2);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left}
+.proof .p b{font-size:22px;color:var(--gold)}
+.proof .p span{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+
+/* sleep timer (player completo) */
+.sheet-cover{width:160px;height:160px;border-radius:50%;display:grid;place-items:center;font-size:72px;margin:6px auto 14px}
+.timer{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.timer .o{border:1px solid var(--line);background:var(--navy-2);color:var(--ink);border-radius:99px;
+  padding:9px 16px;font-weight:700;font-size:14px}
+.timer .o.on{background:var(--gold);color:#0b1426;border-color:var(--gold)}
+.pcontrols{display:flex;align-items:center;justify-content:center;gap:26px;margin:18px 0}
+.pcontrols .c{background:transparent;border:none;color:var(--ink);font-size:28px}
+.pcontrols .play{width:72px;height:72px;border-radius:50%;background:var(--gold);color:#0b1426;font-size:28px;display:grid;place-items:center}
+
+/* ---------- Theodore (pet) ---------- */
+.petscene{position:relative;border-radius:22px;aspect-ratio:1/1;margin-top:8px;overflow:hidden;border:1px solid var(--line);
+  background:#a9caee url('assets/img/pet_room_bg.webp?v=2') center / 100% 100% no-repeat}
+.petscene .frame,.petscene .room-window,.petscene .room-floor{display:none}
+/* o presente neon já vem desenhado no fundo (igual ao nativo); aqui só uma área clicável transparente por cima */
+.petscene .gift{position:absolute;top:18%;right:5%;width:17%;height:15%;font-size:0;color:transparent;z-index:3;cursor:pointer;border-radius:12px;transition:transform .12s ease}
+.petscene .gift:active{transform:scale(.92)}
+.pet-stage{position:absolute;left:50%;bottom:6%;transform:translateX(-50%);height:88%;aspect-ratio:328/688;z-index:2}
+.pet-shadow{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:80%;height:7%;border-radius:50%;background:rgba(40,55,95,.28);filter:blur(5px)}
+.petscene .pet{font-size:120px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+/* idle do burrinho: respira (pés plantados), sem flutuar */
+@keyframes petIdle{0%,100%{transform:translateY(0) scaleY(1) scaleX(1)}50%{transform:translateY(-1px) scaleY(1.022) scaleX(.992)}}
+.petscene .pet.happy{animation:happy .5s ease}
+@keyframes happy{0%,100%{transform:scale(1)}50%{transform:scale(1.18) rotate(-4deg)}}
+.petbar{display:flex;gap:12px;justify-content:center;margin:14px 0 4px}
+.petbar .it{width:52px;height:52px;border-radius:14px;background:var(--navy-2);border:1px solid var(--line);
+  display:grid;place-items:center;font-size:26px;transition:transform .12s ease}
+.petbar .it:active{transform:scale(.88)}
+.petbar .it.sel{border-color:var(--gold);background:rgba(240,193,75,.12);transform:scale(1.06)}
+.petbar .it .pet-ic{width:40px;height:40px;object-fit:contain;display:block}
+.progress-card{background:var(--navy-2);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-top:14px}
+.progress-card .top{display:flex;align-items:center;justify-content:space-between;font-weight:800;margin-bottom:8px}
+.progress-card .coins{color:var(--gold)}
+.xpbar{height:9px;border-radius:99px;background:var(--navy-0);overflow:hidden}
+.xpbar > i{display:block;height:100%;background:var(--gold)}
+.misschip{display:flex;align-items:center;justify-content:space-between;background:#fef3e0;border:1px solid #f0e0b8;
+  border-radius:14px;padding:14px 16px;margin-bottom:10px;color:#3a2c14;box-shadow:0 2px 4px rgba(0,0,0,.12)}
+.misschip .rw{color:var(--gold-d);font-weight:800;font-size:14px}
+.feedbtn{position:fixed;display:none}
+
+/* ===== Tela do Theodore: tema AZUL (igual ao nativo) — tudo abaixo do burrinho fica no azul ===== */
+/* ===== Tela do Theodore — tema AZUL igual ao nativo ===== */
+/* fundo = cor EXATA do chão do quarto, pra o chão continuar sem emenda (sensação "sem fim") */
+.screen.theo-screen{background:#9dbbee}
+.hdr.theo-hdr{background:#9bbffd}
+.theo-screen .sec-t{color:#1d4067}
+.theo-screen .petscene{margin:0 -16px 2px;border-radius:0;border:none}
+/* barra de itens: ícones flat DIRETO no azul (sem card branco), igual ao nativo */
+.theo-screen .petbar{margin-top:14px;gap:12px}
+.theo-screen .petbar .it{background:transparent;border:none;box-shadow:none;width:58px;height:58px;border-radius:0;transition:transform .12s ease;filter:drop-shadow(0 2px 3px rgba(40,70,120,.22))}
+.theo-screen .petbar .it:active{transform:scale(.9)}
+.theo-screen .petbar .it.sel{background:transparent;border:none;transform:scale(1.12)}
+.theo-screen .petbar .it .pet-ic{width:58px;height:58px}
+/* card de nível: ⚡ Lv.X ▬barra▬ X/50 XP  +  pill de moedas separado */
+.theo-prog{display:flex;gap:8px;align-items:stretch;margin-top:14px}
+.lvcard{flex:1;background:#fdf3e3;border-radius:16px;padding:9px 12px;display:flex;align-items:center;gap:9px;box-shadow:0 3px 8px rgba(40,70,120,.14)}
+.lv-bolt{width:34px;height:34px;border-radius:9px;background:#fff7e6;display:grid;place-items:center;font-size:17px;flex:none}
+.lv-num{font-family:'Quicksand',sans-serif;color:#3a2c14;font-size:15px;flex:none}
+.lv-bar{flex:1;height:11px;border-radius:99px;background:#ece0cd;overflow:hidden}
+.lv-bar > i{display:block;height:100%;background:linear-gradient(180deg,#f6c844,#e0a92e)}
+.lv-xp{background:#fff;color:#7a6a4a;font-weight:800;font-size:11px;padding:4px 9px;border-radius:99px;flex:none}
+.lv-coins{background:#fdf3e3;border-radius:16px;padding:0 15px;display:flex;align-items:center;font-weight:800;color:var(--gold-d);font-size:15px;box-shadow:0 3px 8px rgba(40,70,120,.14);flex:none;white-space:nowrap}
+/* missões do dia (cards creme com imagem + recompensa em cima, igual ao nativo) */
+.theo-missions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:6px}
+.theo-mcard{position:relative;background:#fdf3e3;border:none;border-radius:16px;padding:9px 6px 9px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;box-shadow:0 3px 7px rgba(40,70,120,.14);transition:transform .12s ease}
+.theo-mcard:active{transform:scale(.96)}
+.theo-mrw{color:#3a2c14;font-weight:800;font-size:12px}
+.theo-mimg{width:100%;aspect-ratio:1/1;display:grid;place-items:center}
+.theo-mimg img{width:100%;height:100%;object-fit:contain}
+.theo-mimg span{font-size:38px}
+.theo-mlb{font-family:'Quicksand',sans-serif;font-weight:800;font-size:11.5px;color:#3a2c14;text-align:center;line-height:1.15}
+/* "Conheça o Theodore" — carrossel de conteúdo */
+.meet-scroll{margin-top:2px}
+.meetcard{width:158px;flex:none;border:none;background:transparent;padding:0;text-align:left;cursor:pointer}
+.meetcard-img{position:relative;width:100%;aspect-ratio:1/1.12;border-radius:18px;overflow:hidden;display:grid;place-items:center;font-size:60px;box-shadow:0 4px 10px rgba(40,70,120,.18)}
+.meetcard-img .coverimg{width:100%;height:100%;object-fit:cover}
+.meetcard-heart{position:absolute;top:8px;right:8px;width:30px;height:30px;border-radius:50%;border:none;background:rgba(255,255,255,.85);color:#2d6f8f;display:grid;place-items:center;font-size:15px;font-weight:800}
+.meetcard-ti{font-family:'Quicksand',sans-serif;font-weight:800;font-size:14px;color:#1d4067;margin:8px 2px 1px;line-height:1.15}
+.meetcard-ty{font-size:12px;font-weight:700;color:#5e7da3;margin:0 2px}
+
+/* accordion (FAQ) */
+.acc{border:1px solid var(--line);border-radius:14px;background:var(--navy-2);margin-bottom:10px;overflow:hidden}
+.acc summary{list-style:none;padding:14px 16px;font-weight:800;font-size:15px;display:flex;justify-content:space-between;cursor:pointer}
+.acc summary::-webkit-details-marker{display:none}
+.acc[open] summary span{transform:rotate(45deg)}
+.acc summary span{transition:.2s;color:var(--gold);font-size:20px}
+.acc p{padding:0 16px 14px;color:var(--ink-soft);font-size:14px;line-height:1.55;margin:0}
+
+/* ---------- Music ---------- */
+.seg{display:flex;background:var(--navy-2);border:1px solid var(--line);border-radius:99px;padding:4px;margin:8px 0 6px}
+.seg button{flex:1;border:none;background:transparent;color:var(--ink-soft);font-weight:800;font-size:14px;padding:9px;border-radius:99px}
+.seg button.on{background:var(--gold);color:#0b1426}
+.plcard{border-radius:18px;overflow:hidden;background:var(--navy-2);border:1px solid var(--line);text-align:left;padding:0;color:var(--ink)}
+.plcard .cv{aspect-ratio:1/1;overflow:hidden;border-radius:18px 18px 0 0;display:block;font-size:54px}
+.plcard .bd{padding:9px 11px 12px}
+.plcard .ti{font-size:14px;font-weight:800;margin:0 0 2px}
+.plcard .me{font-size:11.5px;color:var(--ink-soft)}
+.noisegrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:6px}
+.music-soon{text-align:center;padding:34px 24px 10px;max-width:360px;margin:8px auto 0;display:flex;flex-direction:column;align-items:center;gap:10px}
+.music-soon-emoji{font-size:52px;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.25))}
+.music-soon h3{font-family:'Quicksand',sans-serif;font-size:19px;font-weight:800;margin:2px 0}
+.music-soon p{color:var(--muted,#8fa0bd);font-size:14px;line-height:1.55;margin:0}
+.music-soon-tip{font-size:13px !important;opacity:.85}
+.music-soon .btn{margin-top:14px;max-width:260px}
+.noise{aspect-ratio:1/1;border-radius:16px;border:1px solid var(--line);display:flex;flex-direction:column;
+  justify-content:flex-end;padding:9px;color:#fff;font-weight:800;font-size:12.5px;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+
+/* ---------- Favorites (empty) ---------- */
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;color:var(--ink-soft);padding:40px}
+.empty .ic{font-size:80px;color:var(--gold)}
+
+/* ---------- Profile ---------- */
+.avrow{display:flex;gap:14px;overflow-x:auto;padding:8px 2px}
+.avrow::-webkit-scrollbar{display:none}
+.avitem{flex:none;width:84px;text-align:center;position:relative}
+.avitem .a{width:84px;height:84px;border-radius:50%;display:grid;place-items:center;font-size:40px;overflow:hidden;
+  background:linear-gradient(160deg,var(--navy-3),var(--navy-2));border:2px solid var(--line);position:relative}
+.avitem.on .a{border-color:var(--gold)}
+.av-cam{position:absolute;top:58px;right:0;width:28px;height:28px;border-radius:50%;background:#33b0c9;
+  display:grid;place-items:center;font-size:13px;border:2px solid var(--navy-1);cursor:pointer;z-index:3}
+.avitem .n{margin-top:6px;font-size:13px;font-weight:700}
+/* Minha conta */
+.acct-head{display:flex;align-items:center;gap:16px;margin:10px 2px 14px}
+.acct-av{position:relative;width:84px;height:84px;border-radius:50%;background:linear-gradient(160deg,var(--navy-3),var(--navy-2));display:grid;place-items:center;font-size:40px;overflow:hidden;flex:none}
+.acct-av img{width:100%;height:100%;object-fit:cover}
+.acct-cam{top:auto;bottom:0;right:0}
+.acct-email{font-size:16px;font-weight:700;color:#fff;word-break:break-all}
+.acct-sub{font-weight:800;font-size:18px;color:#fff;margin:22px 2px 10px}
+.child-row{display:flex;align-items:center;gap:14px;width:100%;background:var(--navy-2);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:12px;color:#fff;cursor:pointer;text-align:left}
+.child-av{width:48px;height:48px;border-radius:50%;background:linear-gradient(160deg,var(--navy-3),var(--navy-2));display:grid;place-items:center;font-size:24px;overflow:hidden;flex:none}
+.child-av img{width:100%;height:100%;object-fit:cover}
+.child-info{flex:1}
+.child-info b{font-size:15px}
+.avitem.add .a{font-size:34px;color:var(--gold);background:transparent;border-style:dashed}
+.statcard{background:linear-gradient(135deg,#f3c655,#d99e2b);border:none;border-radius:18px;padding:26px 18px;margin-bottom:14px;text-align:center;box-shadow:0 4px 14px rgba(216,158,43,.3)}
+.statcard b{font-size:32px;color:#fff;display:block;text-shadow:0 2px 6px rgba(120,80,0,.35)}
+.statcard .muted{color:rgba(255,255,255,.95)!important;font-weight:700;margin-top:2px}
+.field{margin:14px 0}
+.field label{display:block;font-size:13px;font-weight:700;color:var(--ink-soft);margin-bottom:6px}
+.field input{width:100%;background:var(--navy-2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;color:var(--ink);font-size:15px;outline:none}
+.field textarea{width:100%;background:var(--navy-2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;color:var(--ink);font-size:15px;outline:none;resize:none;font-family:inherit}
+.step-t{font-weight:800;font-size:16px;color:#fff}
+.surprise-btn{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;align-items:center;gap:9px;background:#fff;color:#2f7fd6;font-weight:800;font-size:16px;border:none;border-radius:30px;padding:13px 24px;box-shadow:0 6px 22px rgba(0,0,0,.45);cursor:pointer;z-index:6;white-space:nowrap}
+.surprise-btn .ico{width:22px;height:22px}
+
+/* ---------- Settings ---------- */
+.setlist{margin-top:6px}
+.setrow{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:transparent;border:none;
+  color:var(--ink);padding:15px 4px;font-size:15.5px;font-weight:600;border-bottom:1px solid var(--line)}
+.setrow .ic{font-size:18px;width:24px;text-align:center}
+.setrow .ch{margin-left:auto;color:var(--ink-soft)}
+.setrow .val{margin-left:auto;color:var(--ink-soft);font-weight:700}
+.setdiv{height:14px}
+.toggle{margin-left:auto;width:46px;height:27px;border-radius:99px;background:var(--navy-3);border:1px solid var(--line);position:relative;flex:none}
+.toggle.on{background:var(--gold);border-color:var(--gold)}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.18s}
+.toggle.on::after{left:21px}
+.select{margin-left:auto;background:var(--navy-2);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 10px;font-weight:700;font-size:14px}
+.subcard{background:var(--navy-2);border:1px solid var(--line);border-radius:18px;padding:18px;margin-top:10px}
+.subcard .perk{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:14.5px}
+.subcard .perk::before{content:'✓';color:var(--gold);font-weight:900}
+
+/* toast */
+.toast{position:absolute;left:50%;bottom:150px;transform:translateX(-50%);z-index:30;background:var(--navy-3);
+  border:1px solid var(--line);color:var(--ink);padding:11px 18px;border-radius:99px;font-weight:700;font-size:14px;
+  box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;transition:.2s;pointer-events:none}
+.toast.show{opacity:1;bottom:160px}
+
+/* coachmark */
+.coach{position:absolute;left:16px;top:64px;z-index:7;background:var(--gold);color:#0b1426;border-radius:14px;
+  padding:11px 14px;font-size:13px;font-weight:700;max-width:230px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+.coach::before{content:'';position:absolute;top:-7px;left:30px;border:7px solid transparent;border-bottom-color:var(--gold);border-top:0}
+
+/* ===================== reskin: fontes locais (zip) ===================== */
+@font-face{font-family:'Lato';src:url('assets/fonts/Lato-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
+@font-face{font-family:'Lato';src:url('assets/fonts/Lato-Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Lato';src:url('assets/fonts/Lato-Semibold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Lato';src:url('assets/fonts/Lato-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+@font-face{font-family:'Lato';src:url('assets/fonts/Lato-Black.woff2') format('woff2');font-weight:800;font-display:swap}
+@font-face{font-family:'Quicksand';src:url('assets/fonts/Quicksand-Medium.woff2') format('woff2');font-weight:500;font-display:swap}
+@font-face{font-family:'Quicksand';src:url('assets/fonts/Quicksand-SemiBold.woff2') format('woff2');font-weight:600;font-display:swap}
+@font-face{font-family:'Quicksand';src:url('assets/fonts/Quicksand-Bold.woff2') format('woff2');font-weight:700;font-display:swap}
+
+/* ===================== reskin: helpers de ícone ===================== */
+.icoW{filter:brightness(0) invert(1)}                 /* silhueta branca */
+.icoB{filter:brightness(0)}                            /* silhueta preta (sobre dourado) */
+img.ico{width:22px;height:22px;object-fit:contain;display:block}
+
+/* ===================== splash ===================== */
+#splash{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:radial-gradient(120% 70% at 50% 40%,#16273f,#05080f 75%);transition:opacity .5s ease}
+#splash.hide{opacity:0;pointer-events:none}
+#splash-anim{width:200px;height:200px}
+#splash-logo{width:240px;max-width:68%;height:auto;filter:drop-shadow(0 6px 28px rgba(240,193,75,.3));
+  animation:splashIn .9s cubic-bezier(.2,.8,.2,1) both, splashPulse 2.4s ease-in-out .9s infinite}
+@keyframes splashIn{from{opacity:0;transform:scale(.82) translateY(10px)}to{opacity:1;transform:none}}
+@keyframes splashPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.035)}}
+
+/* ===================== tab bar com ícones reais ===================== */
+.tab img.ico{width:25px;height:25px}
+.tab .icoW{opacity:.42;transition:opacity .15s}
+.tab.on .icoW{opacity:1}
+
+/* ===================== hero lottie (Today) ===================== */
+.todayhero{position:relative;border-radius:22px;overflow:hidden;height:160px;margin:6px 0 2px;
+  background:linear-gradient(160deg,#27406b,#16273f);border:1px solid var(--line)}
+.todayhero .lot{position:absolute;inset:0}
+.todayhero .cap{position:absolute;left:16px;bottom:12px;z-index:2;font-weight:800;font-size:15px;
+  font-family:'Quicksand',sans-serif;color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.55)}
+
+/* ===================== ícones dentro de componentes ===================== */
+.search img.ico{width:18px;height:18px;opacity:.7}
+.tcard .lock img.ico,.detail .lockico{width:13px;height:15px}
+.tcard .heart img.ico{width:17px;height:17px}
+.mini .pp img.ico,.pcontrols .play img.ico{width:18px;height:18px}
+.pcontrols .c img.ico{width:30px;height:30px}
+
+/* ===================== pet (ursinho real) ===================== */
+.petscene .petimg{width:100%;height:100%;object-fit:contain;animation:petIdle 3.6s ease-in-out infinite;transform-origin:bottom center;filter:drop-shadow(0 8px 7px rgba(0,0,0,.18));display:block}
+.petscene .petimg.happy{animation:happy .5s ease}
+
+/* ===================== fire lottie (streak) ===================== */
+.firelot{width:150px;height:150px;margin:0 auto}
+
+/* ===================== capas com ilustração real ===================== */
+.coverimg{width:100%;height:100%;object-fit:cover;display:block}
+/* BLINDAGEM de proporção: dentro de grid c/ place-items:center o height:100% da <img> não resolve
+   (fica na altura natural e estoura o card). Absoluto + inset preenche SEMPRE, qualquer proporção de capa. */
+.cover .coverimg,.cv .coverimg,.bigcover .coverimg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mcard .cv,.plcard .cv,.mini .cv,.donecard .cv{position:relative;overflow:hidden}
+.empty .emptyheart{width:120px;height:auto;object-fit:contain}
+
+/* ===================== Daily Missions Today (navy + borda dourada) ===================== */
+.mtcard{width:78%;max-width:300px;aspect-ratio:1/1.1;border-radius:24px;
+  background:var(--navy-1);border:2.5px solid var(--gold);color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;cursor:pointer}
+.mtcard-img{flex:1;display:grid;place-items:center;padding:18px;width:100%;position:relative}
+/* estrelinhas que brilham ao redor da bíblia (igual ao nativo) */
+.mt-sparkles{position:absolute;inset:0;pointer-events:none}
+.mt-sparkles .spk{position:absolute;color:#ffe9a8;font-size:15px;opacity:.55;
+  text-shadow:0 0 8px rgba(255,213,79,.9),0 0 2px #fff}
+.mt-sparkles .spk0{top:16%;left:18%;font-size:18px}
+.mt-sparkles .spk1{top:26%;right:14%;font-size:13px}
+.mt-sparkles .spk2{bottom:24%;left:12%;font-size:12px}
+.mt-sparkles .spk3{bottom:18%;right:18%;font-size:17px}
+.mt-sparkles .spk4{top:46%;right:8%;font-size:11px}
+.mtcard-img img{width:100%;max-width:160px;height:auto;object-fit:contain;border-radius:16px;filter:drop-shadow(0 0 22px rgba(240,193,75,.4))}
+.mtcard-anim{width:100%;max-width:180px;aspect-ratio:1/1;display:block;filter:drop-shadow(0 0 28px rgba(240,193,75,.45))}
+.mtcard-anim svg{width:100%!important;height:100%!important}
+.mtcard-lb{font-family:'Quicksand',sans-serif;font-weight:800;font-size:18px;color:#fff;margin-top:4px;text-align:center}
+
+/* ===================== Have fun with Theodore ===================== */
+.funcard{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:#1a2742;border:1px solid var(--line);border-radius:20px;padding:18px 14px;margin:6px 0 22px;align-items:stretch}
+.fun-act{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:14px;cursor:pointer;padding:6px;min-height:200px}
+.fun-img{flex:1;width:100%;display:flex;align-items:flex-end;justify-content:center;position:relative;overflow:hidden}
+.fun-img img{max-width:100%;max-height:140px;width:auto;height:auto;object-fit:contain;filter:drop-shadow(0 6px 12px rgba(0,0,0,.4))}
+.fun-btn{background:var(--theo-action);color:var(--theo-ink);font-weight:800;font-size:16px;padding:11px 0;width:100%;border-radius:99px;
+  box-shadow:0 4px 0 rgba(0,0,0,.25);border:2.5px solid #fff;font-family:'Quicksand',sans-serif;flex:none}
+
+/* ===================== Bible Verse card ===================== */
+.verse-card{background:var(--navy-1);border:1px solid var(--line);border-radius:18px;padding:22px 18px;
+  margin:22px 0 6px;text-align:center;box-shadow:0 0 30px rgba(40,80,180,.15)}
+.verse-ref{font-weight:800;font-size:16px;letter-spacing:1.2px;margin-bottom:14px}
+.verse-text{font-size:15px;line-height:1.55;color:var(--ink);font-style:italic;margin-bottom:18px}
+.verse-share{background:transparent;border:none;color:var(--ink-soft);font-size:13px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;margin:0 auto;cursor:pointer}
+.verse-share::before{content:'⤴';font-size:22px;border:1.5px solid var(--ink-soft);border-radius:50%;width:38px;height:38px;display:grid;place-items:center;margin-bottom:2px}
+
+/* ===================== Recommended cards (scroll horizontal) ===================== */
+.reccard{width:170px;border-radius:20px;background:transparent;border:none;text-align:left;padding:0;position:relative;color:var(--ink);cursor:pointer}
+.reccard-heart{position:absolute;top:9px;right:9px;z-index:2;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.85);color:#2d6f8f;display:grid;place-items:center;font-size:16px;font-weight:800}
+.reccard-img{aspect-ratio:1/1.3;border-radius:20px;overflow:hidden;background:var(--navy-2)}
+.reccard-img img{width:100%;height:100%;object-fit:cover;display:block}
+.reccard-bd{padding:8px 4px}
+.reccard-ti{font-family:'Quicksand',sans-serif;font-weight:800;font-size:14px;margin:0 0 2px;line-height:1.2;color:#fff;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.reccard-ty{font-size:11.5px;font-weight:600;color:var(--ink-soft)}
+
+/* ===================== New Releases cards ===================== */
+.newcard{width:200px;border-radius:20px;background:transparent;border:none;text-align:left;padding:0;position:relative;color:var(--ink);cursor:pointer}
+.badge-new{position:absolute;top:10px;left:10px;z-index:3;background:#e8a04e;color:#3a2c14;font-weight:800;font-size:11px;padding:4px 10px;border-radius:8px}
+.newcard-img{aspect-ratio:1/1.1;border-radius:20px;overflow:hidden;background:var(--navy-2)}
+.newcard-img img{width:100%;height:100%;object-fit:cover;display:block}
+.newcard-bd{padding:8px 4px}
+.newcard-ti{font-family:'Quicksand',sans-serif;font-weight:800;font-size:15px;margin:0 0 2px;line-height:1.2;color:#fff}
+.newcard-ty{font-size:12px;font-weight:600;color:var(--ink-soft)}
+
+/* ===================== Top 10 cards (rank dourado) ===================== */
+.topcard{width:200px;position:relative;background:transparent;border:none;padding:0 0 0 36px;text-align:left;color:var(--ink);cursor:pointer}
+.topcard-rank{position:absolute;left:-6px;top:50%;transform:translateY(-50%);font-family:'Quicksand',sans-serif;font-weight:900;font-size:120px;line-height:.9;color:transparent;
+  -webkit-text-stroke:2px var(--gold);background:linear-gradient(160deg,var(--gold),var(--gold-d));-webkit-background-clip:text;background-clip:text;z-index:1;text-shadow:0 4px 12px rgba(240,193,75,.3)}
+.topcard-img{aspect-ratio:1/1.15;border-radius:20px;overflow:hidden;background:var(--navy-2);position:relative;z-index:2}
+.topcard-img img{width:100%;height:100%;object-fit:cover;display:block}
+.topcard-bd{padding:8px 4px;position:relative;z-index:2}
+.topcard-ti{font-family:'Quicksand',sans-serif;font-weight:800;font-size:14px;color:#fff}
+.topcard-ty{font-size:11.5px;font-weight:600;color:var(--ink-soft)}
+
+/* ===================== Your current Streak ===================== */
+.streak-info{margin:24px 0 12px;padding:18px;background:transparent}
+.streak-info-t{font-family:'Quicksand',sans-serif;font-weight:800;font-size:20px;color:#fff;margin-bottom:6px}
+.streak-info-d{color:var(--ink-soft);font-size:14px;line-height:1.5;margin-bottom:12px}
+.streak-info-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(240,193,75,.15);color:var(--gold);font-weight:800;padding:8px 16px;border-radius:99px;font-size:15px}
+
+/* ===================== Pet (bot animations) ===================== */
+.petimg.eager{animation:eager .8s ease infinite alternate}
+@keyframes eager{0%{transform:scale(1) rotate(-2deg)}100%{transform:scale(1.04) rotate(2deg)}}
+/* acenar (balança de leve sugerindo o aceno) — pés plantados */
+.petscene .petimg.waving{animation:wavepet .5s ease-in-out 2.5;transform-origin:bottom center}
+@keyframes wavepet{0%,100%{transform:rotate(0)}25%{transform:rotate(3.5deg)}75%{transform:rotate(-2deg)}}
+/* mastigando (boca/cabeça balança ao comer) — pés plantados */
+.petscene .petimg.chew{animation:chew .32s ease-in-out infinite;transform-origin:bottom center}
+@keyframes chew{0%,100%{transform:scaleY(1) scaleX(1)}25%{transform:scaleY(.97) scaleX(1.02)}50%{transform:scaleY(1.03) scaleX(.985)}75%{transform:scaleY(.98) scaleX(1.01)}}
+.pet-bubble{position:absolute;top:6%;left:50%;transform:translateX(-50%);background:#fff;color:#234;padding:14px 18px;border-radius:18px;font-weight:700;font-size:14px;max-width:80%;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.25);z-index:3}
+.pet-bubble::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:#fff;border-bottom:0}
+.dot-check{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:#5ac877;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+
+/* Feed button (cyan estilo app real) */
+.feed-btn{background:var(--theo-action);color:var(--theo-ink);border:2.5px solid #fff;padding:10px 32px;border-radius:99px;font-weight:800;font-size:15px;font-family:'Quicksand',sans-serif;box-shadow:0 3px 0 rgba(0,0,0,.2)}
+.feed-cancel{margin-left:8px;width:30px;height:30px;border-radius:50%;background:var(--red);color:#fff;border:none;font-weight:800;font-size:14px;vertical-align:middle;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.2)}
+
+/* ===================== overlays compartilhados (mood/outfits) ===================== */
+.iconbtn-close{background:var(--red);color:#fff;border:3px solid #fff;width:38px;height:38px;font-size:16px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25)}
+.mood-bg-room{position:absolute;inset:0;background:url('assets/img/pet_room_bg.webp?v=2') center/cover no-repeat;z-index:1}
+/* DECORAÇÕES — mudam a atmosfera do quarto (camada própria, atrás do Theodore) */
+.petscene{position:relative}
+.deco-fx{position:absolute;inset:0;z-index:1;pointer-events:none}
+.mood-bg-room[class*="deco-"]::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none}
+.deco-day-night .deco-fx,.mood-bg-room.deco-day-night::after{background:linear-gradient(180deg,rgba(18,24,70,.32),rgba(8,12,45,.58))}
+.deco-neon .deco-fx,.mood-bg-room.deco-neon::after{background:radial-gradient(circle at 72% 26%,rgba(255,0,200,.34),transparent 58%),radial-gradient(circle at 22% 72%,rgba(0,210,255,.32),transparent 58%),rgba(22,8,42,.34)}
+.deco-sunset .deco-fx,.mood-bg-room.deco-sunset::after{background:linear-gradient(180deg,rgba(255,150,60,.46),rgba(255,90,110,.24) 55%,transparent)}
+.deco-christmas .deco-fx,.mood-bg-room.deco-christmas::after{background:radial-gradient(circle at 50% 12%,rgba(255,80,80,.22),transparent 42%),radial-gradient(circle at 82% 60%,rgba(80,220,120,.22),transparent 42%)}
+/* documento legal (Termos/Privacidade) — cartão branco legível */
+.legal-body{background:#fff;color:#234c5e;border-radius:14px;padding:18px 16px;margin:6px 0}
+.legal-body h1{font-size:21px;font-weight:800;color:#1d3d4c;margin:0 0 4px}
+.legal-body h2{font-size:15.5px;font-weight:700;color:#1d3d4c;margin:20px 0 6px}
+.legal-body p,.legal-body li{color:#3f6e7d;line-height:1.6;font-size:13.5px}
+.legal-body a{color:#4e8fa3}
+.legal-body .updated{font-size:12px;color:#8a98a0}
+.legal-body .back{display:none}
+.mood-pet{position:absolute;left:50%;top:14%;transform:translateX(-50%);height:36%;aspect-ratio:328/688;z-index:2}
+.mood-pet img{width:100%;height:100%;object-fit:contain;animation:petIdle 3.6s ease-in-out infinite;transform-origin:bottom center;filter:drop-shadow(0 8px 8px rgba(0,0,0,.2))}
+.mood-sheet,.outfits-sheet,.rewards-sheet{position:absolute;left:0;right:0;bottom:0;z-index:3;background:#fef3e0;border-top-left-radius:24px;border-top-right-radius:24px;padding:20px 18px calc(28px + env(safe-area-inset-bottom));max-height:60%;color:#3a2c14}
+.mood-q,.outfits-title,.rw-title{font-family:'Quicksand',sans-serif;font-weight:800;font-size:18px;text-align:center;color:#1f4d63;margin-bottom:14px}
+.mood-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.mood-card{aspect-ratio:1/1.1;border:3px solid #fff;border-radius:18px;overflow:hidden;position:relative;cursor:pointer;color:#fff;font-family:'Quicksand',sans-serif;font-weight:800;box-shadow:0 3px 5px rgba(0,0,0,.15)}
+.mood-face{position:absolute;inset:0}
+.mood-face img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.mood-label{position:absolute;left:0;right:0;bottom:0;text-align:center;font-size:13px;font-weight:800;padding:16px 4px 7px;text-shadow:0 1px 3px rgba(0,0,0,.55);background:linear-gradient(transparent,rgba(0,0,0,.3))}
+
+/* Outfits/Decoration sheet */
+.outfits-tabs{display:flex;gap:6px;justify-content:center;margin:-50px 0 4px;position:relative;z-index:2}
+.ot-tab{background:var(--theo-action);border:none;width:60px;height:60px;border-radius:16px 16px 0 0;color:#fff;font-size:24px;cursor:pointer;opacity:.5}
+.ot-tab.on{opacity:1;height:66px}
+.ot-x{position:absolute;right:-2px;top:-50px}
+.outfits-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;max-height:280px;overflow-y:auto}
+.of-card{background:#fff;border:none;border-radius:16px;display:grid;place-items:center;position:relative;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,.1)}
+.of-emoji{font-size:46px}
+.of-card{overflow:hidden}
+.of-card .of-emoji{width:100%;aspect-ratio:1/1;display:grid;place-items:center;padding:7px;box-sizing:border-box}
+.of-thumb{display:block;width:100%;height:100%;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 2px 3px rgba(40,55,95,.18))}
+.of-price{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);background:var(--theo-action);color:var(--theo-ink);font-weight:800;font-size:11.5px;padding:3px 10px;border-radius:99px;white-space:nowrap}
+.of-owned{position:absolute;top:6px;right:6px;background:#5ac877;color:#fff;font-size:12px;font-weight:800;width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
+
+/* Daily Rewards */
+.rewards-sheet{background:#e0eaf6;max-height:auto;padding:24px 22px calc(28px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;text-align:center}
+.rw-x{position:absolute;right:14px;top:14px}
+.rw-sub{font-size:14px;color:#1f4d63;margin-bottom:14px;line-height:1.4}
+.rw-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
+.rw-card{background:#fff;border:2px solid var(--theo-action);border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.rw-card.claimed{opacity:.4}
+.rw-day{background:var(--theo-action);color:var(--theo-ink);font-size:11px;font-weight:800;padding:2px 10px;border-radius:99px;width:fit-content}
+.rw-emoji{font-size:30px;line-height:1}
+.rw-amount{font-size:13px;font-weight:800;color:#3a2c14}
+.rw-claim{background:var(--theo-action);color:var(--theo-ink);border:2.5px solid #fff;font-weight:800;font-size:16px;padding:12px 60px;border-radius:99px;box-shadow:0 3px 0 rgba(0,0,0,.2);font-family:'Quicksand',sans-serif;cursor:pointer}
+
+/* ===================== Joke of the Day (palco vermelho, igual ao nativo) ===================== */
+.joke-screen{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;align-items:center;
+  background:#4a1a1d url('assets/img/joke_stage.webp') center/cover no-repeat}
+/* letreiro "marquee" com lâmpadas douradas */
+.joke-marquee{position:relative;margin-top:64px;background:#f7f4ee;color:#2a2018;font-family:'Quicksand',sans-serif;
+  font-weight:800;font-size:15px;letter-spacing:1.5px;padding:14px 30px;border-radius:7px;
+  box-shadow:0 6px 16px rgba(0,0,0,.5);z-index:3}
+.joke-marquee::before{content:'';position:absolute;inset:-9px;border-radius:12px;border:5px dotted #ffce4a;
+  filter:drop-shadow(0 0 5px rgba(255,205,74,.95))}
+.joke-stage{position:absolute;left:0;right:0;bottom:120px;display:flex;justify-content:center;align-items:flex-end;gap:18px;z-index:2}
+.joke-pet{height:215px;width:auto;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}
+.joke-girl{height:188px;width:auto;object-fit:contain;filter:drop-shadow(0 6px 10px rgba(0,0,0,.45))}
+.joke-bubble{position:absolute;top:150px;left:12%;right:12%;background:#fff;color:#234;border-radius:18px;padding:18px 22px;font-size:15px;font-weight:700;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,.4);z-index:3}
+.joke-bubble::after{content:'';position:absolute;bottom:-12px;left:32%;border:12px solid transparent;border-top-color:#fff;border-bottom:0}
+.joke-next{position:absolute;bottom:36px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:50%;background:#3b9fe0;border:4px solid #fff;color:#fff;font-size:26px;font-weight:800;box-shadow:0 5px 0 rgba(0,0,0,.3);cursor:pointer;z-index:4;display:grid;place-items:center}
+
+/* ===================== Music playlist cards com img ===================== */
+/* .plcard .cv: regra consolidada na seção Music (era duplicada aqui) */
+.plcard{padding:0}
+.plcard .cv img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* ===================== White Noise (cinza + ícone música) ===================== */
+.noisegrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:6px}
+.noisecard{background:transparent;border:none;display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 4px;cursor:pointer}
+.noisecard-ic{width:78px;height:78px;border-radius:50%;background:#3a4762;display:grid;place-items:center;font-size:34px;color:#9fb0cc;
+  box-shadow:inset 0 -3px 8px rgba(0,0,0,.25)}
+.noisecard-lb{font-size:11px;color:var(--ink);font-weight:600;text-align:center}
+.noisecard.on{outline:2px solid var(--gold-d);outline-offset:2px}
+
+/* ===================== Playlist Detail ===================== */
+.pl-detail{padding:0 22px 30px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.pl-cover{width:75%;max-width:280px;aspect-ratio:1/1;border-radius:20px;overflow:hidden;margin:8px 0 18px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.pl-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.pl-title{font-family:'Quicksand',sans-serif;font-weight:800;font-size:24px;margin:0 0 14px;color:#fff;text-align:left;align-self:flex-start}
+.pl-actions{display:flex;gap:12px;width:100%;margin-bottom:18px}
+.pl-act{flex:1;background:#fff;color:#1f4d63;font-weight:800;font-size:14px;padding:13px;border-radius:14px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:'Quicksand',sans-serif}
+.pl-songs{width:100%;display:flex;flex-direction:column;gap:10px}
+.songrow{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.06);border:1px solid var(--line);
+  border-radius:16px;padding:12px 14px;cursor:pointer}
+.song-play{width:38px;height:38px;border-radius:50%;background:var(--theo-action);color:var(--theo-ink);border:none;font-size:13px;display:grid;place-items:center;flex:none}
+.song-ti{flex:1;text-align:left;font-weight:700;font-size:14.5px}
+.song-dur{color:var(--ink-soft);font-size:13px}
+
+/* ===================== Episódios de série (lista no detalhe) ===================== */
+.eprow{display:flex;align-items:center;gap:12px;width:100%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+  border-radius:12px;padding:12px 14px;color:#fff;text-align:left;cursor:pointer}
+.eprow .epnum{width:26px;height:26px;flex:none;border-radius:50%;background:var(--gold);color:#1d2b4a;
+  font-weight:800;font-size:13px;display:grid;place-items:center}
+.eprow .eptitle{flex:1;font-size:14.5px;font-weight:600;line-height:1.3}
+.eprow .epdur{font-size:12px;opacity:.7;white-space:nowrap}
+
+/* ===================== Loading screen ===================== */
+.loadwrap{position:absolute;inset:0;display:grid;place-items:center;background:var(--navy-0)}
+.load-img{width:140px;height:auto;animation:loadpulse 1.5s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(240,193,75,.55))}
+@keyframes loadpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+
+/* ===================== Player real (refeito) ===================== */
+.ov.player{background:var(--navy-0)}
+.player-top{position:relative;width:100%;aspect-ratio:1/1.05;overflow:hidden}
+.player-hdr{position:absolute;top:0;left:0;right:0;display:flex;padding:14px 16px;z-index:3}
+.iconbtn-back{width:44px;height:44px;background:rgba(11,20,38,.55);border-radius:50%;border:none;color:#fff;font-size:22px;font-weight:800;backdrop-filter:blur(8px);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.player-img{position:absolute;inset:0;display:grid;place-items:center}
+.player-img .coverimg,.player-img img{width:100%;height:100%;object-fit:cover}
+.player-ctrl{flex:1;display:flex;flex-direction:column;padding:24px 26px calc(20px + env(safe-area-inset-bottom));gap:14px;align-items:center}
+.player-title{font-family:'Quicksand',sans-serif;font-weight:800;font-size:20px;color:#fff;align-self:flex-start;margin-bottom:4px}
+.player-bar{width:100%;height:5px;background:rgba(255,255,255,.18);border-radius:99px;position:relative;cursor:pointer}
+.player-bar > i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .25s linear}
+.pbar-thumb{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:16px;height:16px;background:#fff;border-radius:50%;box-shadow:0 2px 4px rgba(0,0,0,.4)}
+.player-time{width:100%;display:flex;justify-content:space-between;font-size:12.5px;color:var(--ink-soft);font-weight:600}
+.player-btns{display:flex;align-items:center;gap:30px;margin:4px 0 6px}
+.pbtn-skip{background:transparent;border:none;color:#fff;font-size:18px;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.pbtn-play{width:78px;height:78px;border-radius:50%;background:#fff;color:#1f4d63;font-size:30px;border:none;cursor:pointer;display:grid;place-items:center;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.player-modes{display:flex;gap:30px;margin-top:6px}
+.pmode{background:transparent;border:none;color:var(--ink-soft);font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer}
+.pmode-ic{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.08);display:grid;place-items:center;font-size:18px}
+.pmode.on{color:#fff}
+.pmode.on .pmode-ic{background:#1f4d63}
+.player-finish{margin-top:6px;background:rgba(255,255,255,.08);border:1px solid var(--line);color:var(--ink-soft);font-weight:700;font-size:13px;padding:8px 22px;border-radius:99px;cursor:pointer}
+
+/* ============================================================
+   ANIMAÇÕES GLOBAIS (micro-interações em todo o app)
+   ============================================================ */
+@media (prefers-reduced-motion: no-preference){
+  /* transição de tela: cards entram com fade+subida (stagger) */
+  @keyframes cardPop{from{opacity:0;transform:translateY(12px) scale(.985)}to{opacity:1;transform:none}}
+  .hscroll>*,.grid2>*,#exp-list>*,.noisegrid>*,.pl-songs>*,.setlist>*,.child-row{animation:cardPop .42s cubic-bezier(.2,.8,.2,1) both}
+  .hscroll>*:nth-child(2),.grid2>*:nth-child(2),#exp-list>*:nth-child(2),.noisegrid>*:nth-child(2){animation-delay:.05s}
+  .hscroll>*:nth-child(3),.grid2>*:nth-child(3),#exp-list>*:nth-child(3),.noisegrid>*:nth-child(3){animation-delay:.1s}
+  .hscroll>*:nth-child(4),.grid2>*:nth-child(4),#exp-list>*:nth-child(4),.noisegrid>*:nth-child(4){animation-delay:.15s}
+  .hscroll>*:nth-child(5),.grid2>*:nth-child(5),#exp-list>*:nth-child(5),.noisegrid>*:nth-child(5){animation-delay:.2s}
+  .hscroll>*:nth-child(n+6),.grid2>*:nth-child(n+6),#exp-list>*:nth-child(n+6),.noisegrid>*:nth-child(n+6){animation-delay:.25s}
+  /* títulos de seção entram suaves */
+  @keyframes secIn{from{opacity:0;transform:translateX(-6px)}to{opacity:1;transform:none}}
+  h1.t,.sec-t{animation:secIn .4s ease both}
+  /* overlays deslizam de baixo */
+  @keyframes ovIn{from{transform:translateY(22px)}to{transform:none}}
+  #overlay .ov{animation:ovIn .3s cubic-bezier(.2,.8,.2,1) both}
+  /* pop do ícone da aba ativa */
+  @keyframes tabPop{0%{transform:scale(.7)}55%{transform:scale(1.18)}100%{transform:scale(1)}}
+  .tab.on img.ico{animation:tabPop .34s ease}
+  /* destaque flutua de leve */
+  @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .fcard{animation:cardPop .42s cubic-bezier(.2,.8,.2,1) both, floaty 4.5s ease-in-out 1s infinite}
+  /* chip de streak pulsa */
+  @keyframes streakPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+  .streak{display:inline-block;animation:streakPulse 2.2s ease-in-out infinite}
+  /* glow respirando na bíblia da missão */
+  @keyframes glowPulse{0%,100%{filter:drop-shadow(0 0 18px rgba(240,193,75,.35))}50%{filter:drop-shadow(0 0 30px rgba(240,193,75,.6))}}
+  .mtcard-img img{animation:glowPulse 3s ease-in-out infinite}
+  /* estrelinhas piscando ao redor da bíblia */
+  @keyframes twinkle{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+  .mt-sparkles .spk{animation:twinkle 2.4s ease-in-out infinite}
+  .mt-sparkles .spk1{animation-delay:.5s}
+  .mt-sparkles .spk2{animation-delay:1s}
+  .mt-sparkles .spk3{animation-delay:1.5s}
+  .mt-sparkles .spk4{animation-delay:.8s}
+  /* botões/cards: feedback de toque */
+  .fcard,.tcard .cv,.catbtn,.plcard,.mtcard,.reccard,.newcard,.topcard,.noisecard,.songrow,.child-row,.setrow,.btn,.fun-act,.surprise-btn,.mood-card,.of-card,.pl-act,.tab{transition:transform .12s ease, box-shadow .15s ease}
+  .fcard:active,.tcard .cv:active,.catbtn:active,.plcard:active,.mtcard:active,.reccard:active,.newcard:active,.topcard:active,.noisecard:active,.songrow:active,.child-row:active,.setrow:active,.btn:active,.fun-act:active,.surprise-btn:active,.mood-card:active,.of-card:active,.pl-act:active{transform:scale(.955)}
+  /* coração "pula" ao favoritar */
+  @keyframes heartPop{0%{transform:scale(1)}30%{transform:scale(1.5)}55%{transform:scale(.85)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+  .heart.pop,.iconbtn.pop{animation:heartPop .45s ease}
+  /* botões só-ícone: leve resposta ao toque */
+  .iconbtn,.hdr .ic,.heart,.reccard-heart,.song-play,.share,.pmode,.pbtn-skip,.pbtn-play,.joke-next,.feed-cancel,.mini .pp,.mini .up,.song-play{transition:transform .1s ease, opacity .1s ease}
+  .iconbtn:active,.hdr .ic:active,.heart:active,.reccard-heart:active,.song-play:active,.share:active,.pmode:active,.pbtn-skip:active,.pbtn-play:active,.joke-next:active,.feed-cancel:active,.mini .pp:active,.mini .up:active{transform:scale(.88);opacity:.85}
+  /* botão primário com brilho sutil ao aparecer */
+  @keyframes btnGlow{0%{box-shadow:0 4px 14px rgba(240,193,75,.25)}50%{box-shadow:0 4px 22px rgba(240,193,75,.5)}100%{box-shadow:0 4px 14px rgba(240,193,75,.25)}}
+  .btn{animation:btnGlow 2.8s ease-in-out infinite}
+  /* coração de favoritar bate ao ativar */
+  @keyframes heartBeat{0%{transform:scale(1)}30%{transform:scale(1.4)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+  .heart.on{animation:heartBeat .4s ease}
+  /* surprise button flutua */
+  .surprise-btn{animation:floaty 3s ease-in-out infinite}
+  /* mini-player sobe ao aparecer */
+  @keyframes miniIn{from{transform:translateY(70px)}to{transform:none}}
+  .mini.show{animation:miniIn .35s cubic-bezier(.2,.8,.2,1)}
+}
+
+/* ---- tela de boas-vindas (onboarding) ---- */
+.ov.welcome{background:radial-gradient(120% 70% at 50% 30%,#16273f,#05080f 78%)}
+.welcome-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px 26px;gap:13px;overflow-y:auto}
+.welcome-logo{width:210px;max-width:60%;animation:splashIn .7s ease both}
+.welcome-h{font-size:22px;font-weight:800;margin-top:2px;font-family:'Quicksand',sans-serif}
+/* captura de nome da criança */
+.nc-emoji{font-size:46px;line-height:1;margin:6px 0 -2px;animation:splashIn .6s ease both}
+.namecap .login-input{max-width:340px;text-align:center;font-size:18px;font-weight:700}
+/* login simples */
+.login-fields{width:100%;max-width:340px;margin:18px 0 6px;display:flex;flex-direction:column;gap:12px}
+.login-input{width:100%;box-sizing:border-box;padding:15px 16px;border-radius:14px;border:1.5px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff;font-size:16px;font-family:inherit;outline:none;transition:border-color .15s,background .15s}
+.login-input::placeholder{color:rgba(255,255,255,.5)}
+.login-input:focus{border-color:var(--gold,#f0c14b);background:rgba(255,255,255,.13)}
+.login-ov .login-btn{width:100%;max-width:340px;margin-top:8px}
+.login-terms{font-size:11px;margin-top:16px;opacity:.82;max-width:320px}
+.login-terms a{color:var(--gold,#f0c14b);text-decoration:underline}
+.google-btn{width:100%;max-width:340px;margin-top:6px;background:#fff;color:#1f2430;font-weight:700;font-size:16px;border:none;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 2px 10px rgba(0,0,0,.18)}
+.google-btn svg{flex:0 0 auto}
+.google-btn:active{background:#eef1f6}
+.google-btn:disabled{opacity:.7}
+.login-or{width:100%;max-width:340px;display:flex;align-items:center;gap:12px;color:rgba(255,255,255,.55);font-size:12.5px;margin:16px 0 2px}
+.login-or::before,.login-or::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.16)}
+.welcome-p{color:var(--ink-soft);font-size:14.5px;line-height:1.55;max-width:330px}
+.welcome-feats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:6px 0;width:100%;max-width:340px}
+.wf{display:flex;align-items:center;gap:8px;background:var(--navy-2);border:1px solid var(--line);border-radius:12px;padding:11px 12px;font-size:13px;font-weight:700;text-align:left;color:var(--ink)}
+.wf span{font-size:18px}
+.welcome .btn{max-width:340px;width:100%}
+
+/* ===================== Acessibilidade ===================== */
+/* Alvo de toque mínimo de 44px nos botões só-ícone pequenos, SEM mudar o visual:
+   uma área transparente centralizada captura o toque (preserva layout/aparência). */
+/* .tcard .heart FORA daqui: ele é position:absolute (canto do card); este relative o jogava pro fluxo (canto errado, em cima do cadeado) */
+.iconbtn,.hdr .ic,.reccard-heart,.feed-cancel,.song-play,.mini .pp,.mini .up,.gift{position:relative}
+.iconbtn::after,.hdr .ic::after,.tcard .heart::after,.reccard-heart::after,.feed-cancel::after,.song-play::after,.mini .pp::after,.mini .up::after,.gift::after{
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;min-width:100%;min-height:100%;border-radius:50%;
+}
+/* toggles (switch): 44px de altura tocável (::before invisível) sem cobrir o knob (::after) */
+.toggle::before{content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:100%;height:44px}
+/* foco visível por teclado (acessibilidade) */
+button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ============================================================
+   THEODORE — PREMIUM PASS (tela do pet) — v77
+   Vanilla CSS, mesmos nomes de classe. Este bloco vem por último
+   e refina a tela do Theodore + overlays (humor/roupas/recompensas/piada).
+   ============================================================ */
+
+/* ---- cabeçalho azul: funde com o céu do quarto ---- */
+.hdr.theo-hdr{background:linear-gradient(180deg,var(--theo-sky-1),var(--theo-sky-2))}
+.theo-hdr .prof,.theo-hdr .streak,.theo-hdr .ic{box-shadow:var(--theo-sh-sm)}
+.theo-hdr .prof{color:var(--theo-ink)}
+.theo-hdr .ic{color:var(--theo-ink)}
+.theo-hdr .streak{color:var(--gold-d)}
+
+/* ---- fundo da tela: céu suave (em vez de chapado) ---- */
+.screen.theo-screen{background:linear-gradient(180deg,var(--theo-sky-1) 0%,var(--theo-sky-2) 34%,var(--theo-sky-2) 100%)}
+/* transição de entrada suave ao abrir a tela */
+@media (prefers-reduced-motion:no-preference){
+  .theo-screen{animation:theoEnter var(--d-base) var(--ease-out)}
+}
+/* transform-only: nunca esconde o conteúdo, mesmo se o navegador congelar o frame inicial */
+@keyframes theoEnter{from{transform:translateY(8px)}to{transform:none}}
+
+/* ===================== CENA / QUARTO ===================== */
+.theo-screen .petscene{margin:0 -16px 2px;border:none;border-radius:0;position:relative}
+/* blend topo (header) + leve luz; base funde o chão com o bg da tela */
+.theo-screen .petscene::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(170,205,242,.9),rgba(170,205,242,0) 15%),
+    radial-gradient(120% 64% at 50% 6%,rgba(255,255,255,.28),transparent 55%)}
+.theo-screen .petscene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9%;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(157,187,238,0),var(--theo-sky-2))}
+/* poeira/brilhos flutuando (decorativo) */
+.scene-fx{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.scene-fx i{position:absolute;width:9px;height:9px;border-radius:50%;opacity:0;
+  background:radial-gradient(circle,#fff,rgba(255,255,255,.12) 62%,transparent)}
+.scene-fx i:nth-child(1){left:16%;top:26%}
+.scene-fx i:nth-child(2){left:75%;top:18%;width:6px;height:6px}
+.scene-fx i:nth-child(3){left:30%;top:55%;width:6px;height:6px}
+.scene-fx i:nth-child(4){left:63%;top:48%}
+.scene-fx i:nth-child(5){left:47%;top:13%;width:5px;height:5px}
+/* sombra de contato do burrinho — mais suave/quente */
+.theo-screen .pet-shadow{bottom:-10px;width:60%;height:5.5%;filter:blur(3px);
+  background:radial-gradient(50% 100% at 50% 50%,rgba(40,55,95,.34),rgba(40,55,95,0) 72%)}
+/* presente: anel pulsante convidando o toque */
+.petscene .gift{z-index:4}
+.gift-ring{position:absolute;inset:9%;border-radius:16px;pointer-events:none}
+
+/* ===================== DOCK DE AÇÕES (petbar) =====================
+   Variação A (padrão no app): tiles brancos pillowy com rótulo. */
+.theo-screen .petbar{gap:6px;margin-top:16px;justify-content:center;flex-wrap:nowrap;
+  overflow-x:auto;padding:2px 2px 4px}
+.theo-screen .petbar::-webkit-scrollbar{display:none}
+.theo-screen .petbar .it{flex:0 0 auto;width:60px;height:auto;border-radius:var(--r-md);
+  background:var(--theo-surface);border:none;filter:none;
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 4px 6px;
+  box-shadow:var(--theo-sh-sm);
+  transition:transform var(--d-fast) var(--ease-out),box-shadow var(--d-fast) var(--ease-out)}
+.theo-screen .petbar .it .it-ic{position:relative;width:40px;height:40px;display:grid;place-items:center}
+.theo-screen .petbar .it .pet-ic{width:40px;height:40px}
+.theo-screen .petbar .it .it-lb{font-family:'Quicksand',sans-serif;font-weight:800;font-size:10.5px;color:var(--theo-ink);line-height:1}
+.theo-screen .petbar .it:hover{transform:translateY(-2px);box-shadow:var(--theo-sh-md)}
+.theo-screen .petbar .it:active{transform:translateY(1px) scale(.96);box-shadow:var(--theo-sh-press)}
+.theo-screen .petbar .it.sel{transform:translateY(-2px) scale(1.05);background:#f2fbfc;
+  box-shadow:0 0 0 2.5px var(--theo-cyan),var(--theo-sh-md)}
+.theo-screen .petbar .it.done{box-shadow:0 0 0 2px var(--ok),var(--theo-sh-sm)}
+.theo-screen .petbar .it .dot-check{top:-6px;right:-6px}
+
+/* ===================== NÍVEL / XP + MOEDAS ===================== */
+.theo-screen .theo-prog{gap:10px;margin-top:16px;align-items:stretch}
+.theo-screen .lvcard{background:linear-gradient(180deg,#fff8ec,var(--theo-cream));
+  border-radius:var(--r-lg);padding:11px 14px;gap:11px;align-items:center;
+  box-shadow:var(--theo-sh-sm);position:relative;overflow:hidden}
+.theo-screen .lv-bolt{width:40px;height:40px;border-radius:50%;flex:none;font-size:19px;
+  background:radial-gradient(circle at 35% 30%,#ffe393,var(--theo-gold));
+  box-shadow:0 3px 8px rgba(202,162,51,.4),inset 0 -2px 4px rgba(150,110,18,.35);
+  display:grid;place-items:center}
+.theo-screen .lv-num{font-family:'Quicksand',sans-serif;font-weight:800;font-size:15px;color:var(--theo-ink);flex:none}
+.theo-screen .lv-bar{flex:1;height:12px;border-radius:99px;background:#ecdfc3;overflow:hidden;
+  box-shadow:inset 0 1px 2px rgba(120,90,30,.18);position:relative}
+.theo-screen .lv-bar > i{display:block;height:100%;border-radius:99px;position:relative;
+  background:linear-gradient(90deg,#ffd45e,#f0c14b);transition:width .6s var(--ease-out)}
+.theo-screen .lv-bar > i::after{content:"";position:absolute;inset:0;border-radius:inherit;transform:translateX(-100%);
+  background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.65) 50%,transparent 70%)}
+.theo-screen .lv-xp{font-size:11.5px;font-weight:800;color:#9a7b3c;flex:none}
+.theo-screen .lv-coins{flex:none;align-self:stretch;display:flex;align-items:center;gap:6px;
+  background:linear-gradient(180deg,#fff8ec,var(--theo-cream));border-radius:var(--r-lg);
+  padding:0 15px;font-family:'Quicksand',sans-serif;font-weight:800;font-size:15px;color:#7a5a16;
+  box-shadow:var(--theo-sh-sm)}
+
+/* ===================== MISSÕES DO DIA ===================== */
+.theo-screen .theo-missions{gap:11px;margin-top:8px}
+.theo-screen .theo-mcard{background:linear-gradient(180deg,#fff8ec,var(--theo-cream));
+  border-radius:var(--r-lg);padding:10px 7px;gap:6px;box-shadow:var(--theo-sh-sm);
+  transition:transform var(--d-fast) var(--ease-out),box-shadow var(--d-fast) var(--ease-out)}
+.theo-screen .theo-mcard:hover{transform:translateY(-3px);box-shadow:var(--theo-sh-md)}
+.theo-screen .theo-mcard:active{transform:translateY(1px) scale(.97);box-shadow:var(--theo-sh-press)}
+.theo-screen .theo-mrw{background:var(--theo-gold);color:#5a3e08;font-weight:800;font-size:11px;
+  padding:2px 9px;border-radius:99px;box-shadow:0 2px 4px rgba(202,162,51,.35)}
+.theo-screen .theo-mimg img{filter:drop-shadow(0 3px 5px rgba(40,70,120,.18))}
+.theo-screen .theo-mlb{font-family:'Quicksand',sans-serif;font-weight:800;font-size:12px;color:var(--theo-ink);line-height:1.15;text-align:center}
+.theo-screen .theo-mcard.done{opacity:.72}
+.theo-mdone{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;
+  background:var(--ok);color:#fff;font-weight:800;font-size:12px;display:grid;place-items:center;
+  box-shadow:0 2px 5px rgba(40,70,120,.25)}
+
+/* ===================== TÍTULOS DE SEÇÃO ===================== */
+.theo-screen .sec-t{position:relative;justify-content:flex-start;padding-left:15px;
+  color:var(--theo-ink);font-size:18px;font-weight:800;margin:22px 2px 12px}
+.theo-screen .sec-t::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);
+  width:6px;height:18px;border-radius:99px;background:var(--theo-cyan)}
+
+/* ===================== CARROSSEL "CONHEÇA O THEODORE" ===================== */
+.theo-screen .meetcard-img{border-radius:var(--r-lg);box-shadow:var(--theo-sh-md);
+  transition:transform var(--d-base) var(--ease-out),box-shadow var(--d-base) var(--ease-out)}
+.theo-screen .meetcard:hover .meetcard-img{transform:translateY(-3px);box-shadow:var(--theo-sh-lg)}
+.theo-screen .meetcard:active .meetcard-img{transform:scale(.98)}
+.theo-screen .meetcard-heart{width:32px;height:32px;background:rgba(255,255,255,.92);color:var(--theo-cyan-d);box-shadow:var(--theo-sh-sm)}
+.theo-screen .meetcard-ti{color:var(--theo-ink)}
+.theo-screen .meetcard-ty{color:var(--theo-ink-soft)}
+
+/* ===================== OVERLAYS (humor/roupas/recompensas/piada) ===================== */
+.ov{animation:slideup var(--d-slow) var(--ease-out)}
+.mood-sheet,.outfits-sheet{box-shadow:0 -10px 30px rgba(40,70,120,.25)}
+.mood-sheet::before,.outfits-sheet::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:42px;height:5px;border-radius:99px;background:rgba(31,77,99,.22)}
+.mood-q{font-size:19px}
+.mood-card{transition:transform var(--d-fast) var(--ease-out),box-shadow var(--d-fast) var(--ease-out)}
+.mood-card:hover{transform:translateY(-3px);box-shadow:var(--theo-sh-md)}
+.mood-card:active{transform:scale(.95)}
+.of-card{box-shadow:var(--theo-sh-sm);transition:transform var(--d-fast) var(--ease-out),box-shadow var(--d-fast) var(--ease-out)}
+.of-card:hover{transform:translateY(-2px);box-shadow:var(--theo-sh-md)}
+.of-card:active{transform:scale(.95)}
+.rw-card{transition:transform var(--d-fast) var(--ease-out)}
+.rw-card:not(.claimed):active{transform:scale(.96)}
+.rw-claim,.feed-btn{transition:transform var(--d-fast) var(--ease-out)}
+.rw-claim:active,.feed-btn:active{transform:translateY(2px)}
+.joke-next{transition:transform var(--d-fast) var(--ease-out)}
+.joke-next:active{transform:translateX(-50%) translateY(3px)}
+
+/* ===================== ESTADOS: LOADING + VAZIO ===================== */
+.skel{position:relative;overflow:hidden;background:rgba(255,255,255,.55);border-radius:var(--r-lg)}
+.skel::after{content:"";position:absolute;inset:0;transform:translateX(-100%);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.75),transparent)}
+.theo-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:26px 18px;color:var(--theo-ink)}
+.theo-empty img{width:96px;height:auto;filter:drop-shadow(0 6px 10px rgba(40,70,120,.2))}
+.theo-empty b{font-family:'Quicksand',sans-serif;font-size:16px}
+.theo-empty span{font-size:13.5px;color:var(--theo-ink-soft);max-width:240px;line-height:1.5}
+
+/* ===================== ANIMAÇÕES DE DESTAQUE (respeitam reduced-motion) ===================== */
+@media (prefers-reduced-motion:no-preference){
+  /* 1) brilho varrendo a barra de XP */
+  .theo-screen .lv-bar > i::after{animation:xpSheen 2.6s var(--ease-out) infinite}
+  /* 2) anel pulsante no presente */
+  .gift-ring{animation:giftPulse 2.4s var(--ease-out) infinite}
+  /* 3) poeira de luz flutuando na cena */
+  .scene-fx i{animation:sparkleFloat 6s ease-in-out infinite}
+  .scene-fx i:nth-child(2){animation-duration:7.5s;animation-delay:.8s}
+  .scene-fx i:nth-child(3){animation-duration:5.5s;animation-delay:1.6s}
+  .scene-fx i:nth-child(4){animation-duration:8s;animation-delay:.4s}
+  .scene-fx i:nth-child(5){animation-duration:6.8s;animation-delay:2.2s}
+  .skel::after{animation:skelSweep 1.3s linear infinite}
+}
+@keyframes xpSheen{0%{transform:translateX(-100%)}60%,100%{transform:translateX(220%)}}
+@keyframes giftPulse{0%{box-shadow:0 0 0 0 rgba(255,150,220,.5)}70%{box-shadow:0 0 0 14px rgba(255,150,220,0)}100%{box-shadow:0 0 0 0 rgba(255,150,220,0)}}
+@keyframes sparkleFloat{0%{opacity:0;transform:translateY(6px) scale(.7)}30%{opacity:.85}70%{opacity:.65}100%{opacity:0;transform:translateY(-14px) scale(1.05)}}
+@keyframes skelSweep{100%{transform:translateX(100%)}}
+
+/* ============================================================
+   SEÇÕES DO BURRINHO — animação + acabamento
+   Humor · Brincar · Alimentar · Piada · Roupas
+   (tudo dentro de prefers-reduced-motion: no-preference)
+   ============================================================ */
+/* elementos flutuantes (criados por JS) — base fora do guard */
+.play-heart,.feed-xp,.feed-spark{position:absolute;pointer-events:none;z-index:8;
+  font-family:'Quicksand',sans-serif;will-change:transform,opacity}
+.play-heart,.feed-spark{font-size:24px}
+/* peça atualmente equipada no painel Roupas */
+.of-card.equipped{box-shadow:0 0 0 2.5px var(--theo-cyan),var(--theo-sh-md)}
+.feed-xp{font-weight:800;font-size:19px;color:#ffd45e;text-shadow:0 2px 6px rgba(0,0,0,.4)}
+@media (prefers-reduced-motion:reduce){.play-heart,.feed-xp,.feed-spark{display:none}}
+
+@media (prefers-reduced-motion:no-preference){
+
+  /* —— Entrada em cascata dos cards (Humor + Roupas) —— */
+  @keyframes sheetCardIn{from{transform:translateY(16px) scale(.9)}to{transform:none}}
+  .mood-grid>*,.outfits-grid>*{animation:sheetCardIn .42s var(--ease-bounce) both}
+  .mood-grid>*:nth-child(2),.outfits-grid>*:nth-child(2){animation-delay:.04s}
+  .mood-grid>*:nth-child(3),.outfits-grid>*:nth-child(3){animation-delay:.08s}
+  .mood-grid>*:nth-child(4),.outfits-grid>*:nth-child(4){animation-delay:.12s}
+  .mood-grid>*:nth-child(5),.outfits-grid>*:nth-child(5){animation-delay:.16s}
+  .mood-grid>*:nth-child(6),.outfits-grid>*:nth-child(6){animation-delay:.2s}
+  .mood-grid>*:nth-child(n+7),.outfits-grid>*:nth-child(n+7){animation-delay:.24s}
+  /* pergunta / título desliza de leve */
+  .mood-q,.outfits-title,.joke-marquee{animation:secIn .45s var(--ease-out) both}
+
+  /* —— HUMOR: card escolhido confirma com pulso + ✓, os outros recuam —— */
+  @keyframes moodPick{0%{transform:scale(1)}45%{transform:scale(1.14)}100%{transform:scale(1.06)}}
+  .mood-card.picked{animation:moodPick .32s var(--ease-bounce) forwards;z-index:2;
+    box-shadow:0 0 0 4px #fff,0 0 0 7px var(--theo-cyan),var(--theo-sh-lg)}
+  .mood-card.picked::after{content:"✓";position:absolute;inset:0;display:grid;place-items:center;
+    font-size:34px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.4);
+    background:rgba(31,77,99,.25);animation:fadeIn .22s ease both}
+  .mood-grid.chosen .mood-card:not(.picked){opacity:.32;transform:scale(.94);
+    transition:opacity .25s var(--ease-out),transform .25s var(--ease-out)}
+
+  /* —— BRINCAR: pulinho do Theodore + coraçõezinhos subindo —— */
+  @keyframes petPlay{0%{transform:translateY(0) rotate(0)}
+    20%{transform:translateY(-9%) rotate(-3deg) scaleY(1.03)}
+    45%{transform:translateY(0) rotate(2.5deg) scaleY(.97)}
+    65%{transform:translateY(-4%) rotate(-1.5deg)}
+    100%{transform:translateY(0) rotate(0)}}
+  .petscene .petimg.playing{animation:petPlay .8s var(--ease-bounce);transform-origin:bottom center}
+  @keyframes heartFloat{0%{opacity:0;transform:translateY(4px) scale(.5)}
+    20%{opacity:1}100%{opacity:0;transform:translateY(-90px) scale(1.25)}}
+  .play-heart{animation:heartFloat 1.25s ease-out forwards}
+
+  /* —— ALIMENTAR: "+5 XP" sobe + faíscas de satisfação —— */
+  @keyframes xpFloat{0%{opacity:0;transform:translate(-50%,8px) scale(.7)}
+    25%{opacity:1}100%{opacity:0;transform:translate(-50%,-64px) scale(1.12)}}
+  .feed-xp{left:50%;top:44%;transform:translateX(-50%);animation:xpFloat 1.15s var(--ease-out) forwards}
+  .feed-spark{animation:heartFloat 1.05s ease-out forwards}
+
+  /* —— PIADA: comediante e menina entram, holofotes cruzam, balão estala —— */
+  @keyframes jokePetIn{from{transform:translateX(-44px) translateY(12px)}to{transform:none}}
+  @keyframes jokeGirlIn{from{transform:translateX(44px) translateY(12px)}to{transform:none}}
+  .joke-pet{animation:jokePetIn .5s var(--ease-out) both,petIdle 3.4s ease-in-out .6s infinite}
+  .joke-girl{animation:jokeGirlIn .5s var(--ease-out) .12s both}
+  @keyframes bubblePop{0%{transform:scale(.82)}55%{transform:scale(1.05)}100%{transform:scale(1)}}
+  .joke-bubble{animation:bubblePop .34s var(--ease-bounce)}
+  /* lâmpadas do letreiro pulsando */
+  @keyframes marqueeGlow{0%,100%{filter:drop-shadow(0 0 5px rgba(255,205,74,.95))}
+    50%{filter:drop-shadow(0 0 13px rgba(255,205,74,1))}}
+  .joke-marquee::before{animation:marqueeGlow 1.1s ease-in-out infinite}
+  /* dois holofotes suaves cruzando o palco */
+  .joke-screen::before,.joke-screen::after{content:"";position:absolute;top:-12%;width:150px;height:120%;
+    background:linear-gradient(to bottom,rgba(255,238,175,.3),transparent 72%);
+    filter:blur(9px);pointer-events:none;z-index:1;transform-origin:top center}
+  .joke-screen::before{left:16%;animation:spotSwL 5s ease-in-out infinite}
+  .joke-screen::after{right:16%;animation:spotSwR 5s ease-in-out infinite}
+  @keyframes spotSwL{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(7deg)}}
+  @keyframes spotSwR{0%,100%{transform:rotate(9deg)}50%{transform:rotate(-7deg)}}
+  /* seta "próxima" chamando o toque */
+  @keyframes nextNudge{0%,100%{transform:translateX(-50%)}50%{transform:translateX(calc(-50% + 4px))}}
+  .joke-next{animation:nextNudge 1.8s ease-in-out infinite}
+
+  /* —— ROUPAS: aba ativa pula, compra confirma com anel + ✓ —— */
+  .ot-tab{transition:transform var(--d-fast) var(--ease-out),background var(--d-fast)}
+  .ot-tab.on{animation:tabPop .34s ease}
+  @keyframes buyPop{0%{transform:scale(1)}40%{transform:scale(1.14)}100%{transform:scale(1)}}
+  .of-card.bought{animation:buyPop .42s var(--ease-bounce);
+    box-shadow:0 0 0 3px var(--ok),var(--theo-sh-md)}
+  @keyframes ownedPop{0%{transform:scale(0) rotate(-30deg)}60%{transform:scale(1.3)}100%{transform:scale(1) rotate(0)}}
+  .of-owned{animation:ownedPop .4s var(--ease-bounce) both}
+
+  /* botão fechar dos painéis gira ao tocar */
+  .iconbtn-close{transition:transform var(--d-fast) var(--ease-out),background var(--d-fast)}
+  .iconbtn-close:hover{transform:rotate(90deg)}
+  .iconbtn-close:active{transform:rotate(90deg) scale(.9)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ============================================================
+   DRESS-UP — Theodore veste as peças (emoji posicionado no corpo)
+   ============================================================ */
+.pet-stage{transform-origin:bottom center}
+.pet-stage,.mood-pet{container-type:size}
+.pet-wear{position:absolute;inset:0;z-index:3;pointer-events:none}
+.wear{position:absolute;left:50%;transform:translateX(-50%);line-height:1}
+.wear i{display:block;font-style:normal;font-size:30cqw;
+  filter:drop-shadow(0 2px 3px rgba(40,55,95,.35))}
+/* etiqueta "vestido" no card da peça em uso */
+.of-eq{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);
+  background:var(--theo-cyan);color:var(--theo-ink);font-size:11px;font-weight:800;
+  padding:2px 9px;border-radius:99px;white-space:nowrap;box-shadow:0 2px 4px rgba(40,70,120,.25)}
+/* "pop" + brilho quando o Theodore veste uma roupa nova */
+@keyframes dressPop{0%{transform:scale(.84);filter:brightness(1.45)}55%{transform:scale(1.05)}100%{transform:scale(1);filter:none}}
+.mood-pet.dressup img,.pet-stage.dressup .petimg{animation:dressPop .66s cubic-bezier(.34,1.56,.64,1)}
+
+/* ============================================================
+   BRINCAR — reações variadas do Theodore + estrelinhas (CSS, sem emoji)
+   ============================================================ */
+.spark-star{position:absolute;width:var(--sz,14px);height:var(--sz,14px);z-index:8;pointer-events:none;
+  background:radial-gradient(circle at 50% 45%,#fff6d8,#ffd45e 70%);
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  filter:drop-shadow(0 0 4px rgba(255,205,74,.85))}
+@media (prefers-reduced-motion:reduce){.spark-star{display:none}}
+@media (prefers-reduced-motion:no-preference){
+  .spark-star{animation:sparkRise 1.2s ease-out forwards}
+  @keyframes sparkRise{0%{opacity:0;transform:translateY(8px) scale(.3) rotate(0)}
+    25%{opacity:1}100%{opacity:0;transform:translateY(-66px) scale(1) rotate(45deg)}}
+  /* quatro reações sorteadas a cada toque — todas mantêm translateX(-50%) p/ centralizar */
+  .pet-stage.play-hop{animation:plHop .9s var(--ease-bounce)}
+  .pet-stage.play-wiggle{animation:plWiggle .9s ease-in-out}
+  .pet-stage.play-bounce{animation:plBounce .9s var(--ease-bounce)}
+  .pet-stage.play-tilt{animation:plTilt 1s ease-in-out}
+  @keyframes plHop{0%{transform:translateX(-50%) translateY(0)}25%{transform:translateX(-50%) translateY(-14%) scaleY(1.05)}50%{transform:translateX(-50%) translateY(0) scaleY(.95)}72%{transform:translateX(-50%) translateY(-6%)}100%{transform:translateX(-50%) translateY(0)}}
+  @keyframes plWiggle{0%,100%{transform:translateX(-50%) rotate(0)}18%{transform:translateX(-50%) rotate(-7deg)}38%{transform:translateX(-50%) rotate(6deg)}58%{transform:translateX(-50%) rotate(-5deg)}78%{transform:translateX(-50%) rotate(4deg)}}
+  @keyframes plBounce{0%,100%{transform:translateX(-50%) scaleY(1) scaleX(1) translateY(0)}28%{transform:translateX(-50%) scaleY(.85) scaleX(1.1) translateY(3%)}55%{transform:translateX(-50%) scaleY(1.1) scaleX(.92) translateY(-9%)}78%{transform:translateX(-50%) scaleY(1) scaleX(1) translateY(0)}}
+  @keyframes plTilt{0%,100%{transform:translateX(-50%) rotate(0)}30%{transform:translateX(-50%) rotate(9deg)}62%{transform:translateX(-50%) rotate(-8deg)}}
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<title>Aventura com Jesus</title>
+<meta name="description" content="Histórias bíblicas, meditações, orações e afirmações para crianças crescerem na fé." />
+<!-- PWA -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#0b1426" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Aventura com Jesus" />
+<link rel="apple-touch-icon" href="assets/img/logos/app_icon_180.png" />
+<link rel="icon" type="image/png" href="assets/img/logos/app_icon_192.png" />
+<link rel="stylesheet" href="app.css?v=139" />
+<script src="lottie.min.js?v=139"></script>
+<!-- Gravação de sessão:
+     • WEB  -> Microsoft Clarity (replay fiel no navegador) — Masking "Strict" no painel.
+     • APK  -> Smartlook (SDK nativo, grava a tela real do app) — Masking no painel.
+     Clarity só roda no navegador; no app nativo quem grava é o Smartlook (sem gravar em dobro). -->
+<script>
+  window.CLARITY_ID = "xf5hkayn1k";        // projeto Clarity (WEB)
+  window.SMARTLOOK_KEY = "8231560fb0bd93c9eb58bc8e1c3071ae8f4c3aea"; // projeto Smartlook MOBILE (APK)
+  // domínio onde o /api está deployado (funil). Ex: "https://aventuracomjesus.com".
+  // O login registra o usuário em API_BASE + "/api/register". Vazio = login funciona local, só não envia pro banco.
+  window.API_BASE = "https://aventuracomjesus.com";
+  // métrica AGREGADA do app: track() manda os eventos (navegou, abriu_conteudo, viu_assinatura,
+  // clicou_assinar, notif_open...) pra cá; o painel BI lê em /api/app-event (x-admin-pass).
+  window.ANALYTICS_URL = window.API_BASE + "/api/app-event";
+  // ÁUDIO STREAMADO (mantém o APK leve — as narrações NÃO vão dentro do app).
+  // Vazio = usa os arquivos locais (assets/audio/) — modo offline/dev.
+  window.AUDIO_BASE = "https://apk-download-dgtechsotutionss-projects.vercel.app/audio/";
+  window.AUDIO_VER = "1";   // alavanca de cache-bust: só bumpar se algum áudio JÁ publicado for trocado
+  // link do checkout/renovação (funil): abre o paywall onde o Stripe recebe o pagamento
+  window.STRIPE_CHECKOUT_URL = "https://aventuracomjesus.com/?go=paywall";
+  (function(){
+    var isNative = !!(window.Capacitor && window.Capacitor.getPlatform && window.Capacitor.getPlatform() !== 'web');
+    var id = window.CLARITY_ID;
+    if(isNative || !id || id === "COLE_AQUI_O_ID") return; // Clarity só no web
+    (function(c,l,a,r,i,t,y){
+      c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+      t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+      y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", id);
+  })();
+</script>
+</head>
+<body>
+
+<!-- splash inicial (logo Aventura com Jesus), some após carregar -->
+<div id="splash">
+  <img id="splash-logo" src="assets/img/logos/logo_aventura_branco.webp" alt="Aventura com Jesus" />
+</div>
+
+<div id="app">
+  <!-- header global (preenchido por JS, oculto em algumas telas) -->
+  <header class="hdr" id="hdr"></header>
+
+  <!-- tela ativa (renderizada por JS) -->
+  <div class="screen" id="screen"></div>
+
+  <!-- camada de overlays (fluxo de conteúdo, player, etc.) -->
+  <div id="overlay"></div>
+
+  <!-- mini-player global -->
+  <div class="mini" id="mini">
+    <div class="cv" id="mini-cv">🎵</div>
+    <div class="ti" id="mini-ti">—</div>
+    <button class="pp" id="mini-pp" aria-label="Reproduzir ou pausar"><img src="assets/img/ic_music_pause.webp" class="icoB" alt=""></button>
+    <button class="up" id="mini-up" aria-label="Abrir player">⌃</button>
+  </div>
+
+  <!-- tab bar -->
+  <nav class="tabbar" id="tabbar"></nav>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<!-- áudio de fundo do player -->
+<audio id="bg-audio" src="assets/sound/background.mp3" loop preload="none"></audio>
+
+<script src="data.js?v=139"></script>
+<script src="app.js?v=139"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+</script>
+</body>
+</html>

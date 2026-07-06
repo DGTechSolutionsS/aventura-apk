@@ -1,0 +1,15 @@
+{
+  "appId": "br.com.aventuracomjesus",
+  "appName": "Aventura com Jesus",
+  "webDir": "www",
+  "backgroundColor": "#0b1426",
+  "plugins": {
+    "SplashScreen": { "launchShowDuration": 1000, "backgroundColor": "#0b1426", "showSpinner": false },
+    "LocalNotifications": { "smallIcon": "ic_stat_icon", "iconColor": "#f0c14b" },
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "840295142305-6gbjjhrepqenuk7h3hf65am356td03or.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
+  }
+}
