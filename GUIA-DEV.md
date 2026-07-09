@@ -34,7 +34,7 @@ São **3 peças**. Grave bem:
 ## 1) As peças (onde mora o quê)
 - **Fonte do app:** `theo-quiz/app/` → `index.html`, `app.js` (~1700 linhas), `data.js` (todo o conteúdo), `app.css`, `sw.js`. **Essa é a fonte da verdade.**
 - **APK (Android):** `aventura-apk/` → Capacitor 6, appId `br.com.aventuracomjesus`. Os arquivos do app ficam em `aventura-apk/www/` (espelho da fonte).
-- **Backend (Railway):** Fastify + Postgres + Prisma. Faz 2 coisas: (1) **sync** do progresso do usuário e (2) **hospeda os bundles OTA**. Base: `https://backendtheo-production.up.railway.app`.
+- **Backend (Railway):** Fastify + Postgres + Prisma (TypeScript/ESM). Faz: login/JWT, **sync** do progresso, webhook do Stripe e **hospeda os bundles OTA**. Base: `https://backendtheo-production.up.railway.app`. **Código:** repo `DGTechSolutionsS/BackendTheo` (privado), deploy automático na Railway a cada push. Endpoints OTA: `GET /v1/app/latest`, `GET /v1/app/bundle/:versao`, `POST /v1/app/bundle` (header `x-ota-secret`). ⚠️ Só mexe aqui pra **lógica de servidor** (auth/sync/OTA) — pro app do dia-a-dia **não precisa**.
 - **Mídia:** áudios (`.m4a`) num projeto Vercel (`apk-download`); vídeos no **Cloudflare Stream**.
 - **Funil (site de vendas):** projeto SEPARADO. **NÃO mexer sem cuidado** (tem engines de email/WhatsApp que nutrem os leads).
 
@@ -51,6 +51,14 @@ Isso cobre 95% dos updates (texto, telas, lógica, novo conteúdo):
 
 ## 3) Adicionar mídia
 - **Áudio (narração):** sobe o `.m4a` no host `apk-download` (pasta `/audio/`, nome = `<id>.m4a`) e adiciona o `id` nas listas `NARRATED`/`DR_NARRATED` do `data.js`. Áudio é **streamado** (não entra no bundle → mantém o app leve; mas precisa de net pra tocar a 1ª vez).
+
+  **Como subir o áudio no `apk-download` (IMPORTANTE — tem pegadinha):** o `apk-download` é um projeto **Vercel deployado por CLI** (não por git). Ele guarda `index.html` + o APK + `audio/*.m4a`. **Cada deploy é um snapshot COMPLETO** — se você deployar uma pasta faltando arquivos, **apaga os que faltaram** (some áudio do ar!). Então:
+  1. Precisa de **acesso ao projeto Vercel `apk-download`** (`vercel login` na conta que o gerencia).
+  2. Monta uma pasta com **TUDO que já está no ar + o áudio novo**. Como não guardamos a fonte, dá pra **re-baixar os áudios atuais** do próprio ar (são os `<id>.m4a` das listas `NARRATED`/`DR_NARRATED`): `curl -o audio/<id>.m4a https://apk-download-eight.vercel.app/audio/<id>.m4a` pra cada um.
+  3. Na pasta, linka ao projeto e deploya: `vercel link --project apk-download --yes && vercel deploy --prod --yes`.
+  4. Confere: `curl -I https://apk-download-eight.vercel.app/audio/<id-novo>.m4a` → tem que dar **200**.
+  5. Só então referencia o `id` no `data.js` e publica o OTA (passo 2).
+  - **Rollback:** deu ruim (sumiu áudio)? O Vercel guarda os deploys → re-promove o anterior (`vercel ls apk-download` → promove o de antes). Instantâneo.
 - **Vídeo:** sobe no Cloudflare Stream, pega o ID e cola no campo `video:` do item no `data.js`.
 - **Imagem de capa:** imagem pequena pode ir no app (`www/assets`) → entra no bundle. Imagem grande é melhor streamar (senão engorda o download de toda atualização).
 - Depois de referenciar no `data.js` → publica OTA (passo 2).
