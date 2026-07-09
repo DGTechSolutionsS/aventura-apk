@@ -2,6 +2,35 @@
 
 Guia pra quem vai mexer no app daqui pra frente. App pt-BR cristão infantil (histórias bíblicas, orações, meditações, narrações em áudio). É um **PWA vanilla** (HTML/CSS/JS, sem framework, sem build) empacotado num app **Android via Capacitor**, que **atualiza sozinho via OTA** (não precisa reinstalar pra mudar conteúdo/código).
 
+## 🗺️ MAPA — LEIA ISTO PRIMEIRO (pra não misturar tudo)
+
+São **3 peças**. Grave bem:
+
+```
+1) FUNIL  ................  repo "theo-quiz"  (GitHub: DGTechSolutionsS/theo-quiz)
+   = o SITE DE VENDAS (aventuracomjesus.com). Vende a assinatura.
+   ⚠️ mexer com MUITO cuidado — tem os robôs de email/WhatsApp dos clientes.
+   → dentro dele tem a pasta /app = a versão WEB do app + a FONTE do app.
+
+2) APP  ..................  é o PRODUTO que o cliente usa. Mora em DOIS lugares
+   (é o MESMO app, copiado):
+     • theo-quiz/app/    → versão WEB   (roda no navegador, aventuracomjesus.com/app)
+     • aventura-apk/www/ → MESMA coisa, empacotada como APP ANDROID (o APK)
+   O "aventura-apk" é o EMPACOTADOR que vira o APK. Repo próprio.
+
+3) BACKEND  ..............  servidor na Railway.
+   Guarda o progresso do usuário (sync) + os pacotes de atualização (OTA).
+```
+
+**Como um update chega no cliente:**
+- Mudou o app? → edita em `theo-quiz/app/` → copia pro `aventura-apk/www/` → roda `publish-ota.mjs`.
+  Isso atualiza o **app Android sozinho** (OTA), sem reinstalar.
+- A **versão WEB** é atualizada separado (deploy do funil) — e hoje ela está **atrás** (sem OTA/sync). Não confunda: **web e Android são atualizados por caminhos diferentes.**
+
+**Regra de ouro:** o **app Android** atualiza via **OTA** (mexe no `aventura-apk`). O **funil/web** é outra história — mexe com cuidado.
+
+---
+
 ## 1) As peças (onde mora o quê)
 - **Fonte do app:** `theo-quiz/app/` → `index.html`, `app.js` (~1700 linhas), `data.js` (todo o conteúdo), `app.css`, `sw.js`. **Essa é a fonte da verdade.**
 - **APK (Android):** `aventura-apk/` → Capacitor 6, appId `br.com.aventuracomjesus`. Os arquivos do app ficam em `aventura-apk/www/` (espelho da fonte).
