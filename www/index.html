@@ -14,8 +14,8 @@
 <meta name="apple-mobile-web-app-title" content="Aventura com Jesus" />
 <link rel="apple-touch-icon" href="assets/img/logos/app_icon_180.png" />
 <link rel="icon" type="image/png" href="assets/img/logos/app_icon_192.png" />
-<link rel="stylesheet" href="app.css?v=139" />
-<script src="lottie.min.js?v=139"></script>
+<link rel="stylesheet" href="app.css?v=140" />
+<script src="lottie.min.js?v=140"></script>
 <!-- Gravação de sessão:
      • WEB  -> Microsoft Clarity (replay fiel no navegador) — Masking "Strict" no painel.
      • APK  -> Smartlook (SDK nativo, grava a tela real do app) — Masking no painel.
@@ -26,6 +26,10 @@
   // domínio onde o /api está deployado (funil). Ex: "https://aventuracomjesus.com".
   // O login registra o usuário em API_BASE + "/api/register". Vazio = login funciona local, só não envia pro banco.
   window.API_BASE = "https://aventuracomjesus.com";
+  // backend do APP (Railway) — dados do usuário (progresso, economia, streak): SINCRONIZA + PERSISTE.
+  // localStorage continua como cache/fallback (o app NUNCA cai por causa disso). Tudo best-effort.
+  // KILL-SWITCH: deixe "" pra DESLIGAR o sync na hora (app volta 100% pro localStorage).
+  window.APP_API = "https://backendtheo-production.up.railway.app/v1";
   // métrica AGREGADA do app: track() manda os eventos (navegou, abriu_conteudo, viu_assinatura,
   // clicou_assinar, notif_open...) pra cá; o painel BI lê em /api/app-event (x-admin-pass).
   window.ANALYTICS_URL = window.API_BASE + "/api/app-event";
@@ -81,8 +85,8 @@
 <!-- áudio de fundo do player -->
 <audio id="bg-audio" src="assets/sound/background.mp3" loop preload="none"></audio>
 
-<script src="data.js?v=139"></script>
-<script src="app.js?v=139"></script>
+<script src="data.js?v=140"></script>
+<script src="app.js?v=140"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));

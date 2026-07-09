@@ -8,9 +8,11 @@
     "@capacitor/app": "^6.0.2",
     "@capacitor/core": "^6.2.0",
     "@capacitor/local-notifications": "^6.1.0",
-    "@capacitor/splash-screen": "^6.0.3"
+    "@capacitor/splash-screen": "^6.0.3",
+    "@capgo/capacitor-updater": "^6.50.1"
   },
   "devDependencies": {
-    "@capacitor/cli": "^6.2.0"
+    "@capacitor/cli": "^6.2.0",
+    "adm-zip": "^0.5.18"
   }
 }

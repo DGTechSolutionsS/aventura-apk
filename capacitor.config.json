@@ -10,6 +10,10 @@
       "scopes": ["profile", "email"],
       "serverClientId": "840295142305-6gbjjhrepqenuk7h3hf65am356td03or.apps.googleusercontent.com",
       "forceCodeForRefreshToken": true
+    },
+    "CapacitorUpdater": {
+      "autoUpdate": false,
+      "resetWhenUpdate": true
     }
   }
 }

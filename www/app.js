@@ -51,6 +51,86 @@ function save(){
     try{ state.photos={}; localStorage.setItem(LS, JSON.stringify(state)); toast('Memória cheia — as fotos foram removidas pra liberar espaço'); }
     catch(_){ toast('Não foi possível salvar (memória do aparelho cheia)'); }
   }
+  try{ pushState(); }catch(_){}   // sync best-effort pro backend (NUNCA bloqueia/quebra o save local)
+}
+
+/* ===== SYNC com o BackendTheo (Railway) — dados do usuário ==============================
+   Backend = fonte da verdade; localStorage = cache/fallback -> o app NUNCA cai por causa disto.
+   Tudo best-effort (.catch, não-bloqueante). Protege usuário ativo: no 1o sync o dado LOCAL
+   sobe pro servidor, jamais é apagado por um servidor vazio. Kill-switch: window.APP_API = "".  */
+function _appApi(){ return ((typeof window!=='undefined' && window.APP_API) || '').replace(/\/$/,''); }
+function _jwt(){ try{ return localStorage.getItem('theo_jwt')||''; }catch(_){ return ''; } }
+
+async function appLogin(email, name, idToken){
+  const api=_appApi(); if(!api || (!email && !idToken)) return '';
+  try{
+    const r = await fetch(api+'/auth/app-login', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ email:(email||'').trim().toLowerCase(), name:name||'', ...(idToken?{idToken:idToken}:{}) }) });
+    if(!r.ok) return '';
+    const d = await r.json();
+    if(d && d.token){ try{ localStorage.setItem('theo_jwt', d.token); }catch(_){} return d.token; }
+  }catch(_){}
+  return '';
+}
+
+async function pullState(){
+  const api=_appApi(); if(!api || !_jwt()) return;
+  try{
+    const r = await fetch(api+'/me/profile', { headers:{ 'Authorization':'Bearer '+_jwt() } });
+    if(!r.ok) return;                                    // 401/erro: mantém o local, não mexe em nada
+    const d = await r.json();
+    const srvTs   = (d && d.updatedAt) ? Date.parse(d.updatedAt) : 0;
+    const srvData = (d && d.data && typeof d.data==='object') ? d.data : null;
+    if(srvData && Object.keys(srvData).length && srvTs > (state._syncedAt||0)){
+      // servidor MAIS NOVO -> adota (sincroniza de outro aparelho). Mantém fotos/user/ent locais.
+      const keep = { photos: state.photos, user: state.user, ent: state.ent, _syncedAt: srvTs };
+      state = { ...DEF, ...state, ...srvData, ...keep,
+                settings: { ...DEF.settings, ...(state.settings||{}), ...(srvData.settings||{}) } };
+      save(); if(typeof render==='function'){ try{ render(); }catch(_){} }
+    } else {
+      pushState(true);                                  // servidor vazio/velho -> sobe o LOCAL (protege usuário ativo)
+    }
+  }catch(_){}
+}
+
+let _pushT;
+function pushState(now){
+  const api=_appApi(); if(!api || !_jwt()) return;
+  clearTimeout(_pushT);
+  const doIt = async ()=>{
+    try{
+      const data = { ...state }; delete data.photos; delete data._syncedAt;   // fotos ficam locais; _syncedAt é meta
+      const r = await fetch(api+'/me/profile', { method:'PUT',
+        headers:{ 'Authorization':'Bearer '+_jwt(), 'Content-Type':'application/json' },
+        body: JSON.stringify({ data }) });
+      if(!r.ok) return;
+      const d = await r.json();
+      if(d && d.updatedAt){ state._syncedAt = Date.parse(d.updatedAt); try{ localStorage.setItem(LS, JSON.stringify(state)); }catch(_){} }
+    }catch(_){}
+  };
+  if(now) doIt(); else _pushT = setTimeout(doIt, 1500);   // debounce 1.5s (evita flood a cada moeda)
+}
+// Espera o sync (login+pull) assentar e SÓ ENTÃO roda cb (ex.: pedir o nome do filho).
+// Assim não pergunta o nome antes do servidor devolver os dados. Teto de 4s: rede
+// lenta/travada NUNCA segura o fluxo (cai no fallback local, igual antes).
+function afterSync(p, cb){
+  let done=false; const once=()=>{ if(done) return; done=true; try{ cb(); }catch(_){} };
+  if(p && p.finally) p.finally(once); else Promise.resolve().then(once);
+  setTimeout(once, 4000);
+}
+// ===== OTA: atualiza o conteúdo do app (o bundle web) SEM reinstalar o APK — SÓ nativo, best-effort =====
+// Plugin Capgo (modo manual). Endpoint no mesmo backend (APP_API + /app/*). Na web isto é no-op.
+function _ota(){ try{ return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorUpdater; }catch(_){ return null; } }
+async function otaCheck(){
+  const Up=_ota(), api=_appApi(); if(!Up || !api) return;
+  try{
+    const r = await fetch(api+'/app/latest', { cache:'no-store' }); if(!r.ok) return;
+    const d = await r.json(); if(!d || !d.version || !d.url) return;   // ainda não há bundle publicado
+    let running=''; try{ const c=await Up.current(); running=(c&&c.bundle&&c.bundle.version)||''; }catch(_){}
+    if(d.version===running) return;                                    // já está na última
+    const b = await Up.download({ url:d.url, version:d.version });      // baixa em 2º plano
+    if(b && b.id){ await Up.set({ id:b.id }); }                         // aplica na PRÓXIMA abertura (silencioso)
+  }catch(_){}
 }
 /* comprime foto (canvas ~256px, JPEG) antes de salvar, pra não estourar o localStorage */
 function compressImage(file, cb){
@@ -1515,7 +1595,8 @@ function doLogin(){
   track('login', 'usuario', email);
   closeOverlays(); render(); checkEntitlement();
   toast('Que bom te ver, '+(name||'amiguinho')+'! 🙏');
-  ensureKidName();
+  // liga no BackendTheo (Railway), sincroniza, e SÓ ENTÃO pergunta o nome do filho se faltar
+  afterSync(appLogin(email, name).then(pullState), function(){ ensureKidName(); });
 }
 async function doGoogleLogin(btn){
   var GA = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.GoogleAuth;
@@ -1526,6 +1607,7 @@ async function doGoogleLogin(btn){
     var u = await GA.signIn();
     var email = ((u && u.email)||'').trim().toLowerCase();
     var name  = ((u && (u.givenName||u.name||u.displayName))||'').trim();
+    var idToken = (u && u.authentication && u.authentication.idToken) || '';   // token assinado do Google (login FORTE)
     if(!email || email.indexOf('@')<1){ toast('Não consegui pegar seu e-mail do Google 😅'); if(btn){btn.disabled=false; var s2=btn.querySelector('span'); if(s2) s2.textContent=btn.dataset.t;} return; }
     state.user={ email, name }; state.onboarded=true; save();
     var base=(window.API_BASE||'').replace(/\/$/,'');
@@ -1534,13 +1616,14 @@ async function doGoogleLogin(btn){
     track('login','usuario',email);
     closeOverlays(); render(); checkEntitlement();
     toast('Que bom te ver, '+(name||'amiguinho')+'! 🙏');
-    ensureKidName();
+    // liga no BackendTheo (Railway), sincroniza, e SÓ ENTÃO pergunta o nome do filho se faltar
+    afterSync(appLogin(email, name, idToken).then(pullState), function(){ ensureKidName(); });
   }catch(e){
     if(btn){ btn.disabled=false; var s3=btn.querySelector('span'); if(s3) s3.textContent=btn.dataset.t||'Entrar com Google'; }
     toast('Login com Google não concluído.');
   }
 }
-function logout(){ if(confirm('Sair da conta?')){ state.user=null; state.ent=null; _locked=false; save(); openLoginScreen(); } }
+function logout(){ if(confirm('Sair da conta?')){ state.user=null; state.ent=null; _locked=false; state._syncedAt=0; try{localStorage.removeItem('theo_jwt');}catch(_){} save(); openLoginScreen(); } }
 
 /* ===== TRAVA DE ACESSO: o app pergunta ao Stripe se o e-mail tem assinatura ATIVA ===== */
 var _locked=false;
@@ -1630,9 +1713,15 @@ state.onboarded=true; save();
 if(window.__preview){ ensureKidName(); }   // preview: entra direto no conteúdo, sem login nem trava
 // se ainda não logou, mostra a tela de login por cima (o app só registra; o pagamento já foi no funil)
 else if(!(state.user && state.user.email)) openLoginScreen();
-else { if(state.ent && !state.ent.active) showLockedScreen(); else ensureKidName(); checkEntitlement(); }   // logado: valida assinatura no Stripe
+else { checkEntitlement();   // logado: valida assinatura no Stripe
+       var _lk = !!(state.ent && !state.ent.active); if(_lk) showLockedScreen();   // trava aparece NA HORA (não espera o sync)
+       // liga/sincroniza com o BackendTheo e SÓ DEPOIS pergunta o nome do filho (evita pedir nome e o sync sobrescrever)
+       var _sp = _jwt() ? pullState() : appLogin(state.user.email, state.user.name).then(pullState);
+       if(!_lk) afterSync(_sp, function(){ ensureKidName(); }); }
 setupReminders();
 (function initSplash(){
   const sp=document.getElementById('splash');
   setTimeout(()=>{ if(!sp) return; sp.classList.add('hide'); setTimeout(()=>sp.remove(),600); }, 2000);
 })();
+// OTA (só APK): avisa que o bundle carregou OK (destrava/impede o rollback) + procura update novo.
+(function(){ const Up=_ota(); if(!Up) return; try{ Up.notifyAppReady(); }catch(_){} try{ otaCheck(); }catch(_){} })();

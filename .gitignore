@@ -9,4 +9,11 @@ aventura-release.jks
 android/keystore.properties
 *.jks
 *.keystore
+# segredo do OTA (upload de bundles) — nunca commitar:
+.ota-secret
 .DS_Store
+# artefatos de deploy/build (binários grandes, geráveis — não versionar):
+apk-download-rebuild/
+apk-host/
+releases/
+email-preview.html
