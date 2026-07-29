@@ -1,5 +1,5 @@
 /* Service Worker — Aventura com Jesus (cache offline simples) */
-const V = '144';   // ⚠️ BUMPAR a cada release, junto com o ?v= do index.html — senão offline serve versão velha
+const V = '152';   // ⚠️ BUMPAR a cada release, junto com o ?v= do index.html — senão offline serve versão velha
 const CACHE = 'aventura-v' + V;
 const CORE = [
   './', './index.html', `./app.css?v=${V}`, `./app.js?v=${V}`, `./data.js?v=${V}`,

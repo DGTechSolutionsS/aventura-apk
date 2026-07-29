@@ -32,12 +32,12 @@ function toggleRepeat(b){ if(!bgAudio) return; bgAudio.loop=!bgAudio.loop; if(b)
 /* ---------------- estado ---------------- */
 const LS='theoapp_v2';
 const DEF={ profile:0, onboarded:false, names:{}, photos:{}, favs:[], ratings:{}, streak:1, week:[1,0,0,0,0,0,0],
-  xp:0, level:1, coins:40, missionsDone:[], doneToday:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
+  xp:0, level:1, coins:40, missionsDone:[], doneToday:[], colored:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
   lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null,
   settings:{ pet:true, lang:'Português', faith:'Não denominacional / Independente', dur:true, reminder:'20:00', music:'noise' } };
 let state = load();
 /* blindagem: localStorage corrompido (arrays/obj virando null) não pode derrubar render */
-['favs','missionsDone','doneToday','week'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=JSON.parse(JSON.stringify(DEF[k])); });
+['favs','missionsDone','doneToday','colored','week'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=JSON.parse(JSON.stringify(DEF[k])); });
 ['ratings','names','photos'].forEach(k=>{ if(!state[k]||typeof state[k]!=='object') state[k]={}; });
 /* nome REAL da criança (digitado pelos pais) sobrepõe o nome-exemplo do slot */
 function pname(i){ return (state.names&&state.names[i]) || 'Meu pequeno'; }
@@ -345,6 +345,10 @@ function screenExplore(){
   elScreen.innerHTML=`
     <h1 class="t">Explorar</h1>
     <div class="search"><img class="ico icoW" src="assets/img/icon_search.webp" alt=""><input placeholder="Buscar uma história" oninput="filterExplore(this.value)"></div>
+    <button class="catbtn" onclick="window.openColorir&&window.openColorir()" aria-label="Abrir Colorir — pinte as figurinhas da Bíblia">
+      <span class="cv"><img src="assets/img/cat_colorir.jpg?v=36" alt=""></span>
+      <span class="ti">Colorir</span>
+    </button>
     <div id="exp-list">${CATEGORIES.map(c=>`
       <button class="catbtn" onclick="openCategory('${c.slug}')">
         <span class="cv">${c.img?`<img src="assets/img/${c.img}?v=36" alt="">`:c.emoji}</span>
