@@ -147,11 +147,9 @@ function compressImage(file, cb){
 /* ---------------- utils ---------------- */
 let toastT;
 function toast(msg){ elToast.textContent=msg; elToast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>elToast.classList.remove('show'),1800); }
-/* evento nomeado de comportamento -> vira filtro/insight no Clarity (e no hook do funil) */
+/* evento nomeado de comportamento -> métrica AGREGADA no backend próprio (sem replay/gravação) */
 function track(event, tagKey, tagVal){
   try{
-    if(window.clarity){ window.clarity('event', event); if(tagKey) window.clarity('set', tagKey, String(tagVal)); }
-    if(window.Smartlook && window.Smartlook.trackCustomEvent){ try{ window.Smartlook.trackCustomEvent({name:event}); }catch(_){} }
     if(window.ANALYTICS_URL){ fetch(window.ANALYTICS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:event,tag:tagKey,val:tagVal,ts:Date.now()})}).catch(()=>{}); }
   }catch(_){}
 }
@@ -1229,9 +1227,9 @@ function openAddDevice(){
 function openContact(){
   elOv.innerHTML=`<div class="ov"><div class="ovtop"><button class="iconbtn" aria-label="Voltar" onclick="openSettings()">‹</button><b>Fale conosco</b><span style="width:40px"></span></div>
     <div class="body" style="padding:0 16px 40px">
-      <p class="muted" style="margin:12px 2px 18px">Dúvidas, cancelamento, reembolso ou sugestões? Fale com a gente no WhatsApp — respondemos com carinho. 💛</p>
-      <button class="btn" style="display:block;width:100%" onclick="openWaSupport()">💬 Falar no WhatsApp</button>
-      <a class="btn ghost" style="display:block;text-align:center;text-decoration:none;margin-top:10px" href="mailto:crescimentoautentico@gmail.com?subject=Aventura%20com%20Jesus">✉️ Ou por e-mail</a>
+      <p class="muted" style="margin:12px 2px 18px">Dúvidas, cancelamento, reembolso ou sugestões? Fale com a gente por e-mail — respondemos com carinho. 💛</p>
+      <a class="btn" style="display:block;width:100%;text-align:center;text-decoration:none" href="mailto:contato@aventuracomjesus.com?subject=Ajuda%20%E2%80%94%20Aventura%20com%20Jesus&body=Ol%C3%A1!%20Preciso%20de%20ajuda%20com%20a%20Aventura%20com%20Jesus.%20Meu%20e-mail%20da%20compra%20%C3%A9%3A%20">✉️ Falar por e-mail</a>
+      <p class="muted" style="text-align:center;margin-top:10px;font-size:12px">contato@aventuracomjesus.com</p>
     </div></div>`;
 }
 function resetAppData(){ if(confirm('Apagar todos os dados do app neste aparelho? Isso remove progresso, fotos e preferências e não pode ser desfeito.')){ try{ localStorage.removeItem(LS); }catch(_){} location.reload(); } }
@@ -1264,7 +1262,7 @@ function openSubscription(){
     ? '✅ Assinatura ativa. Obrigado por apoiar a Aventura!'
     : inTrial
       ? `🎁 Teste grátis: <b>${left} ${left===1?'dia restante':'dias restantes'}</b>.`
-      : 'Seu teste grátis terminou. Assine para continuar a aventura.';
+      : 'Seu teste grátis terminou.';
   elOv.innerHTML=`<div class="ov"><div class="ovtop"><button class="iconbtn" aria-label="Voltar" onclick="openSettings()">‹</button><b>Minha assinatura</b><span style="width:40px"></span></div>
     <div class="body" style="padding:0 16px 40px">
       <div class="subcard">
@@ -1274,8 +1272,7 @@ function openSubscription(){
         <div style="text-align:center;font-weight:800;font-size:16px;margin-top:18px">Seu plano inclui:</div>
         <div style="margin-top:12px">${SUB_BENEFITS.map(b=>`<div class="perk">🔥 ${b}</div>`).join('')}</div>
         <p class="muted" style="font-size:12px;margin-top:12px"><a href="javascript:void(0)" onclick="openLegal('termos.html','Termos de Uso')" style="color:inherit;text-decoration:underline">Termos de Uso</a> · <a href="javascript:void(0)" onclick="openLegal('privacidade.html','Política de Privacidade')" style="color:inherit;text-decoration:underline">Política de Privacidade</a></p>
-        ${sub?'':`<button class="btn" style="margin-top:8px" onclick="startCheckout()">${inTrial?'ASSINAR AGORA':'REATIVAR ASSINATURA'}</button>`}
-        <p class="muted" style="font-size:12px;margin-top:12px;text-align:center"><a href="javascript:void(0)" onclick="openWaSupport('Olá! Quero cancelar ou pedir reembolso da minha assinatura da Aventura com Jesus. Meu e-mail da compra é: ')" style="color:inherit;text-decoration:underline">Cancelar ou pedir reembolso</a></p>
+        <p class="muted" style="font-size:12px;margin-top:12px;text-align:center"><a href="javascript:void(0)" onclick="openSupport('Cancelamento ou reembolso — Aventura com Jesus','Olá! Quero cancelar ou pedir reembolso da minha assinatura da Aventura com Jesus. Meu e-mail da compra é: ')" style="color:inherit;text-decoration:underline">Cancelar ou pedir reembolso</a></p>
       </div>
     </div></div>`;
 }
@@ -1298,15 +1295,15 @@ function openExternal(url){
   var w=null; try{ w=window.open(url,'_blank'); }catch(_){}
   if(!w) location.href=url;
 }
-/* suporte por WhatsApp (cancelamento/reembolso/dúvidas) — msg pré-preenchida pra colher o e-mail da compra */
-var WA_SUPPORT='5511930628181';
-function openWaSupport(msg){ openExternal('https://wa.me/'+WA_SUPPORT+'?text='+encodeURIComponent(msg||'Olá! Preciso de ajuda com a Aventura com Jesus. Meu e-mail da compra é: ')); }
-/* hand-off do pagamento: o dev seta window.STRIPE_CHECKOUT_URL (Payment Link) ou liga ao /api/create-subscription */
+/* suporte por e-mail (cancelamento/reembolso/dúvidas) — WhatsApp descontinuado; corpo pré-preenchido pra colher o e-mail da compra */
+var SUPPORT_EMAIL='contato@aventuracomjesus.com';
+function openSupport(subject,msg){ location.href='mailto:'+SUPPORT_EMAIL+'?subject='+encodeURIComponent(subject||'Ajuda — Aventura com Jesus')+'&body='+encodeURIComponent(msg||'Olá! Preciso de ajuda com a Aventura com Jesus. Meu e-mail da compra é: '); }
+function openWaSupport(msg){ openSupport('Ajuda — Aventura com Jesus', msg); } /* compat: era WhatsApp, agora abre e-mail */
+/* PLAY / ANTI-STEERING: o app NÃO pode levar o usuário a um pagamento fora da Play Store.
+   Os botões de assinar/renovar foram removidos da UI; estas funções ficam só como rede de
+   segurança (se sobrar alguma chamada antiga em cache, abre o SUPORTE, nunca o checkout). */
 function startCheckout(){
-  track('clicou_assinar');
-  const url = checkoutUrl();
-  if(url){ openExternal(url); return; }
-  toast('💳 Pagamento via Stripe — em breve');
+  openSupport('Assinatura — Aventura com Jesus','Olá! Quero falar sobre a assinatura da Aventura com Jesus. Meu e-mail é: ');
 }
 /* abre Termos/Privacidade (arquivos html empacotados no app, funciona offline) */
 function openLegal(file,title){
@@ -1357,7 +1354,13 @@ function trialDaysLeft(){
   const elapsed=Math.floor((new Date()-start)/86400000);
   return Math.max(0, 7-elapsed);
 }
+/* CONTA DE REVISÃO (Google Play): o revisor precisa ver TODO o conteúdo, senão reprova por
+   "não consegui testar o app". Este e-mail entra pela tela de login normal e nunca é travado.
+   As credenciais vão em Play Console > Acesso ao app. */
+var REVIEW_EMAIL='review@aventuracomjesus.com';
+function isReviewer(){ try{ return !!(state.user && state.user.email && state.user.email.trim().toLowerCase()===REVIEW_EMAIL); }catch(_){ return false; } }
 function canAccess(){
+  if(isReviewer()) return true;                      // conta de revisão da Play: acesso total
   if(state.subscribed) return true;                  // override manual (raro)
   if(state.ent){ return !!state.ent.active; }         // resposta do Stripe manda: ativo/trial = ok; cancelou/não pagou = bloqueia
   return !!(state.user && state.user.email) || trialDaysLeft()>0;   // ainda não checou (acabou de logar / 1ª vez offline): libera enquanto verifica
@@ -1561,13 +1564,10 @@ function saveNameCapture(){
 /* —— LOGIN simples: identifica e registra o usuário no banco (o pagamento já foi no funil) —— */
 function openLoginScreen(){
   elOv.style.display='block';
-  var isNative = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
-  var gBtn = isNative ? `
-      <button class="btn google-btn" onclick="doGoogleLogin(this)">
-        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path fill="#4285F4" d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"/><path fill="#34A853" d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.83.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.97 10.72a5.4 5.4 0 0 1 0-3.44V4.95H.96a9 9 0 0 0 0 8.1l3.01-2.33z"/><path fill="#EA4335" d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.9 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"/></svg>
-        <span>Entrar com Google</span>
-      </button>
-      <div class="login-or"><span>ou com seu e-mail</span></div>` : '';
+  // Login com Google DESLIGADO por enquanto: o plugin nativo não está instalado e o cliente
+  // OAuth Android depende do SHA-1 da chave de assinatura da Play (só existe após publicar).
+  // Fica pronto pra religar numa v4.1 — por ora só login por e-mail (funciona 100%).
+  var gBtn = '';
   elOv.innerHTML=`<div class="ov welcome login-ov">
     <div class="welcome-body">
       <img class="welcome-logo" src="assets/img/logos/logo_aventura_branco.webp?v=42" alt="">
@@ -1630,6 +1630,7 @@ var _locked=false;
 function recheckSub(){ toast('Verificando sua assinatura...'); checkEntitlement(); }
 function checkEntitlement(){
   if(window.__preview) return;   // MODO PREVIEW (link secreto): não valida assinatura, não trava
+  if(isReviewer()){ state.ent={active:true,status:'review',ts:Date.now()}; save(); return; }  // conta de revisão da Play: nunca trava
   if(!(state.user && state.user.email)) return;
   var base=(window.API_BASE||'').replace(/\/$/,'');
   if(!base) return;   // sem backend configurado: não trava (ex: rodando local/web dev)
@@ -1650,17 +1651,15 @@ function showLockedScreen(){
   elOv.innerHTML='<div class="ov welcome login-ov"><div class="welcome-body">'
     +'<img class="welcome-logo" src="assets/img/logos/logo_aventura_branco.webp?v=42" alt="">'
     +'<h2 class="welcome-h">Sua assinatura não está ativa 🙏</h2>'
-    +'<p class="welcome-p">Não encontramos uma assinatura ativa para <b>'+escHtml(mail)+'</b>. Renove para continuar a aventura de fé do seu pequeno.</p>'
-    +'<button class="btn login-btn" onclick="openRenew()">Renovar assinatura</button>'
-    +'<button class="btn ghost" style="margin-top:10px" onclick="recheckSub()">Já renovei — verificar</button>'
+    +'<p class="welcome-p">Não encontramos uma assinatura ativa para <b>'+escHtml(mail)+'</b>.</p>'
+    +'<button class="btn login-btn" onclick="recheckSub()">Verificar novamente</button>'
     +'<button class="btn google-btn" style="margin-top:10px" onclick="logout()"><span>Entrar com outro e-mail</span></button>'
     +'<p class="muted login-terms">Use o mesmo e-mail da sua compra. Dúvidas? <a href="mailto:contato@aventuracomjesus.com">contato@aventuracomjesus.com</a></p>'
     +'</div></div>';
 }
 function openRenew(){
-  // abre o paywall do funil já com &e=<email> (quando houver), pra evitar beco sem saída de pagamento
-  var url=checkoutUrl()||window.STRIPE_CHECKOUT_URL||window.API_BASE||'https://aventuracomjesus.com';
-  openExternal(url);
+  // PLAY / ANTI-STEERING: não abre mais o checkout web. Encaminha pro suporte por e-mail.
+  openSupport('Assinatura — Aventura com Jesus','Olá! Quero falar sobre a assinatura da Aventura com Jesus. Meu e-mail é: ');
 }
 
 /* rede de segurança: imagem que falha some (sem ícone de "quebrado") */
@@ -1681,15 +1680,8 @@ document.addEventListener('error', e=>{ const t=e.target; if(t&&t.tagName==='IMG
   });
 })();
 
-/* Smartlook — gravação de sessão NATIVA (mostra a tela real do app). Só roda no APK.
-   Gated por window.SMARTLOOK_KEY (definido no index.html). */
-(function setupSmartlook(){
-  var key = window.SMARTLOOK_KEY;
-  if(!key || key==='COLE_AQUI_A_KEY') return;
-  function start(){ try{ if(window.Smartlook){ window.Smartlook.setProjectKey({key:key}); window.Smartlook.start(); } }catch(e){} }
-  if(window.Smartlook) start();                            // já pronto
-  else document.addEventListener('deviceready', start, false);   // espera o Cordova/plugin
-})();
+/* Gravação de sessão REMOVIDA (Google Play — Programa Famílias proíbe SDK de replay/gravação
+   de tela em app para crianças). O SDK nativo nunca chegou a ser instalado; era código morto. */
 
 /* desbloqueia o áudio no 1º toque (alguns WebViews bloqueiam play sem gesto) */
 (function unlockAudio(){

@@ -17,3 +17,5 @@ apk-download-rebuild/
 apk-host/
 releases/
 email-preview.html
+# backup dos ícones placeholder antigos (gerados pelo Capacitor) — substituídos pelo ícone novo:
+_icons_backup_capacitor/
