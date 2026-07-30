@@ -105,13 +105,25 @@
     {id:"criacao-animais",name:"Os Animaizinhos",col:"Dia 6",file:"criacao-animais.png",img:null,draw:drawArt},
     {id:"criacao-jardim",name:"O Jardim Feliz",col:"A Família",file:"criacao-jardim.png",img:null,draw:drawArt},
     {id:"criacao-descanso",name:"O Dia de Descanso",col:"Dia 7",file:"criacao-descanso.png",img:null,draw:drawArt},
+    /* Álbum 4 — Milagres de Jesus. "Pães e Peixes" e "Zaqueu" já existem no álbum 1;
+       aqui são OUTROS momentos das mesmas histórias, com ids próprios (milagre-cesta,
+       milagre-zaqueu) pra não colidir com o progresso de quem já pintou os do álbum 1. */
+    {id:"milagre-aguas",name:"Jesus nas Águas",col:"O Passo de Fé",file:"milagre-aguas.png",img:null,draw:drawArt},
+    {id:"milagre-cesta",name:"A Cesta que Não Acabava",col:"O Pão do Céu",file:"milagre-cesta.png",img:null,draw:drawArt},
+    {id:"milagre-tempestade",name:"O Mar Ficou Calmo",col:"A Paz de Jesus",file:"milagre-tempestade.png",img:null,draw:drawArt},
+    {id:"milagre-cego",name:"Os Olhos que Viram",col:"A Luz",file:"milagre-cego.png",img:null,draw:drawArt},
+    {id:"milagre-ovelha",name:"A Ovelhinha Achada",col:"Ninguém se Perde",file:"milagre-ovelha.png",img:null,draw:drawArt},
+    {id:"milagre-zaqueu",name:"O Almoço do Zaqueu",col:"O Convite",file:"milagre-zaqueu.png",img:null,draw:drawArt},
+    {id:"milagre-volta",name:"O Abraço do Pai",col:"O Perdão",file:"milagre-volta.png",img:null,draw:drawArt},
+    {id:"milagre-bencao",name:"A Bênção de Jesus",col:"A Grande Bênção",file:"milagre-bencao.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
     {id:"alb1",name:"Amiguinhos da Bíblia",sub:"Álbum 1",ids:["jesus","pastor","criancas","davi","zaqueu","paes","arca","daniel"]},
     // a capa do álbum é o PRIMEIRO id da lista (ver clrRenderCovers) — aqui, o Menino da Funda
     {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]},
-    {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]}
+    {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]},
+    {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]}
   ];
   var curAlbum=null;
 
