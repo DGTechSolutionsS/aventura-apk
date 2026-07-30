@@ -188,28 +188,21 @@
       }
     }
   }
-  // TOQUE = preciso (1 região) · ARRASTE = pincel gordinho (preenche o grupo)
-  var painting=false, strokePushed=false, lastX=0, lastY=0;
-  var BRUSH=[[0,0],[9,0],[-9,0],[0,9],[0,-9],[7,7],[-7,7],[7,-7],[-7,-7]];
+  // TOQUE = preenche 1 região. Só isso.
+  // O arraste (pincel gordinho) foi REMOVIDO: encostar o dedo e escorregar saía pintando
+  // tudo pelo caminho, o que numa mão de criança é acidente, não recurso.
+  var painting=false, strokePushed=false;
   function toXY(cx,cy){var r=cv.getBoundingClientRect();return[Math.round((cx-r.left)/r.width*700),Math.round((cy-r.top)/r.height*700)];}
-  function stamp(x,y,fat){
+  function stamp(x,y){
     if(!strokePushed){pushUndo();strokePushed=true;}
-    if(fat){for(var i=0;i<BRUSH.length;i++)floodOn(x+BRUSH[i][0],y+BRUSH[i][1]);}
-    else floodOn(x,y);
-  }
-  function stampLine(x0,y0,x1,y1){
-    var dx=x1-x0,dy=y1-y0,n=Math.max(1,Math.ceil(Math.hypot(dx,dy)/6));
-    for(var i=1;i<=n;i++)stamp(Math.round(x0+dx*i/n),Math.round(y0+dy*i/n),true);
+    floodOn(x,y);
   }
   function bindCanvas(){
     cv.addEventListener("pointerdown",function(e){ e.preventDefault(); painting=true; strokePushed=false;
       var sensEl=qs("#clr-sens"); LT=60+(sensEl?(+sensEl.value):42); curRGB=hexRgb(curColor); work=ctx.getImageData(0,0,700,700);
       try{cv.setPointerCapture(e.pointerId);}catch(_){ }
       ensureAudio(); sfxFill(); sparkle(e.clientX,e.clientY); lastSpark=Date.now();
-      var p=toXY(e.clientX,e.clientY); lastX=p[0]; lastY=p[1]; stamp(p[0],p[1],false); ctx.putImageData(work,0,0); });
-    cv.addEventListener("pointermove",function(e){ if(!painting)return; e.preventDefault();
-      if(Date.now()-lastSpark>60){ sparkle(e.clientX,e.clientY); lastSpark=Date.now(); }
-      var p=toXY(e.clientX,e.clientY); stampLine(lastX,lastY,p[0],p[1]); lastX=p[0]; lastY=p[1]; ctx.putImageData(work,0,0); });
+      var p=toXY(e.clientX,e.clientY); stamp(p[0],p[1]); ctx.putImageData(work,0,0); });
     cv.addEventListener("pointerup",function(){ if(painting&&work)ctx.putImageData(work,0,0); painting=false; work=null; });
     cv.addEventListener("pointercancel",function(){ painting=false; work=null; });
   }
@@ -460,8 +453,11 @@
     ".clr-cel.on{display:flex}",
     ".clr-celbox{background:linear-gradient(165deg,#1d2f52,#0e1a34);border:1px solid #35507f;border-radius:26px;padding:26px 22px;max-width:340px;width:100%;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,.5);animation:clrPop .4s cubic-bezier(.2,1.3,.4,1)}",
     "@keyframes clrPop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}",
-    ".clr-celdavi{width:auto;height:120px;object-fit:contain;animation:clrBounce 1s ease-in-out infinite;filter:drop-shadow(0 7px 11px rgba(0,0,0,.35))}",
-    "@keyframes clrBounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}",
+    /* display:block + margin auto porque a regra global .clr-overlay img{display:block}
+       tira a imagem do fluxo inline — sem a margem ela ignora o text-align:center do card
+       e cola na esquerda. Anima só a escala: pular e girar deixava o Davi torto. */
+    ".clr-celdavi{width:auto;height:120px;object-fit:contain;display:block;margin:0 auto;animation:clrBreathe 2.4s ease-in-out infinite;filter:drop-shadow(0 7px 11px rgba(0,0,0,.35))}",
+    "@keyframes clrBreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}",
     ".clr-celbox h2{margin:6px 0 2px;font-size:24px;color:var(--clr-gold)}",
     ".clr-celbox p{margin:0 0 14px;color:var(--clr-ink);font-weight:600}",
     ".clr-rewards{display:flex;justify-content:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}",
