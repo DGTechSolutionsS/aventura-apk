@@ -82,10 +82,23 @@
     {id:"paes",name:"Pães e Peixes",col:"O Milagre",file:"paes.png",img:null,draw:drawArt},
     {id:"arca",name:"A Arca de Noé",col:"A Grande Promessa",file:"arca.png",img:null,draw:drawArt},
     {id:"daniel",name:"Daniel e o Leão",col:"A Coragem",file:"daniel.png",img:null,draw:drawArt},
+    /* Álbum 2 — Heróis da Bíblia. O id "davi" já é o burrinho mascote no álbum 1, e é ele
+       que guarda o progresso em state.colored; por isso o Davi bíblico entra como
+       "davi-funda" e aparece pra criança como "O Menino da Funda" (dois Davis confundem). */
+    {id:"davi-funda",name:"O Menino da Funda",col:"A Coragem Pequena",file:"davi-funda.png",img:null,draw:drawArt},
+    {id:"sansao",name:"Sansão Forte",col:"A Força",file:"sansao.png",img:null,draw:drawArt},
+    {id:"moises-mar",name:"Moisés e o Mar",col:"O Caminho no Mar",file:"moises-mar.png",img:null,draw:drawArt},
+    {id:"jose-manto",name:"José e o Manto",col:"O Perdão",file:"jose-manto.png",img:null,draw:drawArt},
+    {id:"jonas",name:"Jonas e a Baleia",col:"A Segunda Chance",file:"jonas.png",img:null,draw:drawArt},
+    {id:"tabuas",name:"As Duas Tábuas",col:"As Palavras de Deus",file:"tabuas.png",img:null,draw:drawArt},
+    {id:"bom-amigo",name:"O Bom Amigo",col:"O Cuidado",file:"bom-amigo.png",img:null,draw:drawArt},
+    {id:"abraao",name:"Abraão e as Estrelas",col:"A Promessa",file:"abraao.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
-    {id:"alb1",name:"Amiguinhos da Bíblia",sub:"Álbum 1",ids:["jesus","pastor","criancas","davi","zaqueu","paes","arca","daniel"]}
+    {id:"alb1",name:"Amiguinhos da Bíblia",sub:"Álbum 1",ids:["jesus","pastor","criancas","davi","zaqueu","paes","arca","daniel"]},
+    // a capa do álbum é o PRIMEIRO id da lista (ver clrRenderCovers) — aqui, o Menino da Funda
+    {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]}
   ];
   var curAlbum=null;
 
