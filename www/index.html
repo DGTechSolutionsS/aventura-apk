@@ -14,8 +14,8 @@
 <meta name="apple-mobile-web-app-title" content="Aventura com Jesus" />
 <link rel="apple-touch-icon" href="assets/img/logos/app_icon_180.png" />
 <link rel="icon" type="image/png" href="assets/img/logos/app_icon_192.png" />
-<link rel="stylesheet" href="app.css?v=153" />
-<script src="lottie.min.js?v=153"></script>
+<link rel="stylesheet" href="app.css?v=154" />
+<script src="lottie.min.js?v=154"></script>
 <!-- SEM gravação de sessão. Smartlook e Microsoft Clarity foram REMOVIDOS: o Programa Famílias
      do Google Play proíbe SDK de replay/gravação de tela em app para crianças. A métrica que
      sobrou é agregada e anônima (ANALYTICS_URL, backend próprio) — sem replay, sem vídeo. -->
@@ -34,6 +34,11 @@
   // Vazio = usa os arquivos locais (assets/audio/) — modo offline/dev.
   window.AUDIO_BASE = "https://apk-download-dgtechsotutionss-projects.vercel.app/audio/";
   window.AUDIO_VER = "1";   // alavanca de cache-bust: só bumpar se algum áudio JÁ publicado for trocado
+  // DESENHOS DO COLORIR. Vazio = assets/colorir/ dentro do próprio bundle.
+  // No APK isto tem que ficar VAZIO: é o que mantém a criança pintando SEM SINAL.
+  // Diferente do áudio, que é streamado de propósito pra não engordar o APK, os
+  // desenhos são leves (448 KB) e valem mais offline do que economizando espaço.
+  window.COLORIR_BASE = "";
   // PLAY / ANTI-STEERING: o app NÃO pode levar a um pagamento fora da Play Store.
   // STRIPE_CHECKOUT_URL foi zerado de propósito — com "" nenhum código abre checkout externo.
   window.STRIPE_CHECKOUT_URL = "";
@@ -73,9 +78,9 @@
 <!-- áudio de fundo do player -->
 <audio id="bg-audio" src="assets/sound/background.mp3" loop preload="none"></audio>
 
-<script src="data.js?v=153"></script>
-<script src="app.js?v=153"></script>
-<script defer src="colorir.js?v=153"></script>
+<script src="data.js?v=154"></script>
+<script src="app.js?v=154"></script>
+<script defer src="colorir.js?v=154"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
