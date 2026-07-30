@@ -93,12 +93,25 @@
     {id:"tabuas",name:"As Duas Tábuas",col:"As Palavras de Deus",file:"tabuas.png",img:null,draw:drawArt},
     {id:"bom-amigo",name:"O Bom Amigo",col:"O Cuidado",file:"bom-amigo.png",img:null,draw:drawArt},
     {id:"abraao",name:"Abraão e as Estrelas",col:"A Promessa",file:"abraao.png",img:null,draw:drawArt},
+    /* Álbum 3 — O Mundo que Deus Criou. A ordem É a sequência dos 7 dias: a criança
+       "constrói o mundo" pintando na ordem, o que dá um fio condutor que o álbum
+       solto não tem. Amarra na história pra dormir "No Princípio" e no vídeo curto
+       "A Criação do Mundo". O Jardim entra fora da contagem de dias, como fecho. */
+    {id:"criacao-luz",name:"A Primeira Luz",col:"Dia 1",file:"criacao-luz.png",img:null,draw:drawArt},
+    {id:"criacao-ceu",name:"O Céu e as Águas",col:"Dia 2",file:"criacao-ceu.png",img:null,draw:drawArt},
+    {id:"criacao-terra",name:"A Terra Florida",col:"Dia 3",file:"criacao-terra.png",img:null,draw:drawArt},
+    {id:"criacao-sol-lua",name:"O Sol e a Lua",col:"Dia 4",file:"criacao-sol-lua.png",img:null,draw:drawArt},
+    {id:"criacao-peixes",name:"Peixes e Passarinhos",col:"Dia 5",file:"criacao-peixes.png",img:null,draw:drawArt},
+    {id:"criacao-animais",name:"Os Animaizinhos",col:"Dia 6",file:"criacao-animais.png",img:null,draw:drawArt},
+    {id:"criacao-jardim",name:"O Jardim Feliz",col:"A Família",file:"criacao-jardim.png",img:null,draw:drawArt},
+    {id:"criacao-descanso",name:"O Dia de Descanso",col:"Dia 7",file:"criacao-descanso.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
     {id:"alb1",name:"Amiguinhos da Bíblia",sub:"Álbum 1",ids:["jesus","pastor","criancas","davi","zaqueu","paes","arca","daniel"]},
     // a capa do álbum é o PRIMEIRO id da lista (ver clrRenderCovers) — aqui, o Menino da Funda
-    {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]}
+    {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]},
+    {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]}
   ];
   var curAlbum=null;
 
