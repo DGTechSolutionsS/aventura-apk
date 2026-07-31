@@ -140,6 +140,19 @@
     {id:"coracao-partilha",name:"Dividir é Bom",col:"Compartilhar",file:"coracao-partilha.png",img:null,draw:drawArt},
     {id:"coracao-proposito",name:"Feito com Amor",col:"O Propósito",file:"coracao-proposito.png",img:null,draw:drawArt},
     {id:"coracao-paz",name:"Paz no Coração",col:"A Calma",file:"coracao-paz.png",img:null,draw:drawArt},
+    /* Álbum 7 — Momentos de Oração. Par visual da missão diária "Oração de Hoje":
+       a criança escuta a oração e pinta a figurinha correspondente. Ordem = ciclo do
+       dia (manhã, refeição, casa, amigos, noite); as 4 primeiras diurnas, as 4
+       últimas noturnas. Mãos unidas como dois blocos fechados — dedo separado vira
+       sliver, que é o mesmo motivo de o mascote Davi orar com os cascos juntos. */
+    {id:"oracao-manha",name:"Bom Dia, Deus",col:"Oração da Manhã",file:"oracao-manha.png",img:null,draw:drawArt},
+    {id:"oracao-obrigado",name:"Obrigado pela Comida",col:"Gratidão",file:"oracao-obrigado.png",img:null,draw:drawArt},
+    {id:"oracao-familia",name:"Oração em Família",col:"A Família",file:"oracao-familia.png",img:null,draw:drawArt},
+    {id:"oracao-amigos",name:"Rezando com Amigos",col:"Juntos",file:"oracao-amigos.png",img:null,draw:drawArt},
+    {id:"oracao-protecao",name:"Deus Me Protege",col:"A Proteção",file:"oracao-protecao.png",img:null,draw:drawArt},
+    {id:"oracao-cancao",name:"A Canção do Mel",col:"O Pablo",file:"oracao-cancao.png",img:null,draw:drawArt},
+    {id:"oracao-mascote",name:"O Davi Ora Também",col:"O Mascote",file:"oracao-mascote.png",img:null,draw:drawArt},
+    {id:"oracao-noite",name:"Boa Noite, Deus",col:"Oração da Noite",file:"oracao-noite.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
@@ -149,7 +162,8 @@
     {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]},
     {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]},
     {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]},
-    {id:"alb6",name:"Meu Coração Feliz",sub:"Álbum 6",ids:["coracao-amado","coracao-corajoso","coracao-cuidado","coracao-especial","coracao-bondoso","coracao-partilha","coracao-proposito","coracao-paz"]}
+    {id:"alb6",name:"Meu Coração Feliz",sub:"Álbum 6",ids:["coracao-amado","coracao-corajoso","coracao-cuidado","coracao-especial","coracao-bondoso","coracao-partilha","coracao-proposito","coracao-paz"]},
+    {id:"alb7",name:"Momentos de Oração",sub:"Álbum 7",ids:["oracao-manha","oracao-obrigado","oracao-familia","oracao-amigos","oracao-protecao","oracao-cancao","oracao-mascote","oracao-noite"]}
   ];
   var curAlbum=null;
 
