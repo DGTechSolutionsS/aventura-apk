@@ -116,6 +116,18 @@
     {id:"milagre-zaqueu",name:"O Almoço do Zaqueu",col:"O Convite",file:"milagre-zaqueu.png",img:null,draw:drawArt},
     {id:"milagre-volta",name:"O Abraço do Pai",col:"O Perdão",file:"milagre-volta.png",img:null,draw:drawArt},
     {id:"milagre-bencao",name:"A Bênção de Jesus",col:"A Grande Bênção",file:"milagre-bencao.png",img:null,draw:drawArt},
+    /* Álbum 5 — Noite de Paz. O único noturno: lua e estrelas no lugar do sol.
+       Amarra em "O Nascimento de Jesus" (top 10 das histórias pra dormir) e é o
+       ativo sazonal de Natal. Ordem: anunciação -> viagem -> estrela -> manjedoura
+       -> pastores -> reis, seguindo a narrativa. */
+    {id:"natal-anjo",name:"O Anjo e Maria",col:"A Anunciação",file:"natal-anjo.png",img:null,draw:drawArt},
+    {id:"natal-viagem",name:"A Viagem do Burrinho",col:"O Caminho",file:"natal-viagem.png",img:null,draw:drawArt},
+    {id:"natal-estrela",name:"A Estrela Guia",col:"A Luz da Noite",file:"natal-estrela.png",img:null,draw:drawArt},
+    {id:"natal-manjedoura",name:"O Bebê na Manjedoura",col:"A Noite Feliz",file:"natal-manjedoura.png",img:null,draw:drawArt},
+    {id:"natal-pastores",name:"Os Pastorezinhos",col:"A Boa Notícia",file:"natal-pastores.png",img:null,draw:drawArt},
+    {id:"natal-reis",name:"Os Três Presentes",col:"Os Reis Magos",file:"natal-reis.png",img:null,draw:drawArt},
+    {id:"natal-abraao",name:"Contando Estrelas",col:"A Promessa da Noite",file:"natal-abraao.png",img:null,draw:drawArt},
+    {id:"natal-boanoite",name:"Boa Noite com Jesus",col:"O Descanso",file:"natal-boanoite.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
@@ -123,7 +135,8 @@
     // a capa do álbum é o PRIMEIRO id da lista (ver clrRenderCovers) — aqui, o Menino da Funda
     {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]},
     {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]},
-    {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]}
+    {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]},
+    {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]}
   ];
   var curAlbum=null;
 
