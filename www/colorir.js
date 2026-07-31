@@ -166,6 +166,19 @@
     {id:"bencao-samaritano",name:"Quem é Meu Vizinho",col:"O Bom Samaritano",file:"bencao-samaritano.png",img:null,draw:drawArt},
     {id:"bencao-ovelha",name:"A Ovelha Perdida",col:"A Busca",file:"bencao-ovelha.png",img:null,draw:drawArt},
     {id:"bencao-amor",name:"Amar de Verdade",col:"Ame com Profundidade",file:"bencao-amor.png",img:null,draw:drawArt},
+    /* Álbum 9 — O Mundo do Davi. Fecha a coleção em 72. Único sem figura bíblica:
+       é o cotidiano do mascote (quarto, lanche, roupas, piada), espelhando a aba
+       Davi. O "davi" do álbum 1 é o retrato dele; estes são as cenas, com ids
+       próprios. Consistência do personagem veio de passar a CAPA como imagem de
+       referência nas outras 7 — descrição de texto sozinha só dá "parecido". */
+    {id:"davi-oi",name:"Oi, Eu Sou o Davi!",col:"O Amiguinho",file:"davi-oi.png",img:null,draw:drawArt},
+    {id:"davi-quarto",name:"O Quarto do Davi",col:"Meu Cantinho",file:"davi-quarto.png",img:null,draw:drawArt},
+    {id:"davi-lanche",name:"Hora do Lanche",col:"Alimentar",file:"davi-lanche.png",img:null,draw:drawArt},
+    {id:"davi-brincar",name:"Vamos Brincar!",col:"Brincar",file:"davi-brincar.png",img:null,draw:drawArt},
+    {id:"davi-piada",name:"A Piada do Davi",col:"Rir É Bom",file:"davi-piada.png",img:null,draw:drawArt},
+    {id:"davi-roupas",name:"Meu Look Novo",col:"Roupas",file:"davi-roupas.png",img:null,draw:drawArt},
+    {id:"davi-leitura",name:"A Leitura do Dia",col:"Missões do Dia",file:"davi-leitura.png",img:null,draw:drawArt},
+    {id:"davi-cancao",name:"A Canção do Davi",col:"Hora de Cantar",file:"davi-cancao.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
@@ -177,7 +190,8 @@
     {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]},
     {id:"alb6",name:"Meu Coração Feliz",sub:"Álbum 6",ids:["coracao-amado","coracao-corajoso","coracao-cuidado","coracao-especial","coracao-bondoso","coracao-partilha","coracao-proposito","coracao-paz"]},
     {id:"alb7",name:"Momentos de Oração",sub:"Álbum 7",ids:["oracao-manha","oracao-obrigado","oracao-familia","oracao-amigos","oracao-protecao","oracao-cancao","oracao-mascote","oracao-noite"]},
-    {id:"alb8",name:"As Bênçãos de Jesus",sub:"Álbum 8",ids:["bencao-anunciacao","bencao-burrinho","bencao-paodoceu","bencao-salmo","bencao-criancas","bencao-samaritano","bencao-ovelha","bencao-amor"]}
+    {id:"alb8",name:"As Bênçãos de Jesus",sub:"Álbum 8",ids:["bencao-anunciacao","bencao-burrinho","bencao-paodoceu","bencao-salmo","bencao-criancas","bencao-samaritano","bencao-ovelha","bencao-amor"]},
+    {id:"alb9",name:"O Mundo do Davi",sub:"Álbum 9",ids:["davi-oi","davi-quarto","davi-lanche","davi-brincar","davi-piada","davi-roupas","davi-leitura","davi-cancao"]}
   ];
   var curAlbum=null;
 
