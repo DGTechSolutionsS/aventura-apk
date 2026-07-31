@@ -153,6 +153,19 @@
     {id:"oracao-cancao",name:"A Canção do Mel",col:"O Pablo",file:"oracao-cancao.png",img:null,draw:drawArt},
     {id:"oracao-mascote",name:"O Davi Ora Também",col:"O Mascote",file:"oracao-mascote.png",img:null,draw:drawArt},
     {id:"oracao-noite",name:"Boa Noite, Deus",col:"Oração da Noite",file:"oracao-noite.png",img:null,draw:drawArt},
+    /* Álbum 8 — As Bênçãos de Jesus. Espelha a série do app episódio por episódio,
+       o que abre caminho pra linkar cada figurinha ao episódio ("assista e depois
+       pinte"). Jesus padronizado nas 8 (barba curta, cabelo em blocos, túnica) —
+       mas SEM a faixa cruzada e SEM sandálias: medi que tira fina no peito e
+       recorte no pé afinam o traço e picotam (slivers 27,4 -> 19,1 só tirando). */
+    {id:"bencao-anunciacao",name:"O Anjo Chegou",col:"A Anunciação",file:"bencao-anunciacao.png",img:null,draw:drawArt},
+    {id:"bencao-burrinho",name:"O Rei no Burrinho",col:"Jerusalém",file:"bencao-burrinho.png",img:null,draw:drawArt},
+    {id:"bencao-paodoceu",name:"O Pão do Céu",col:"O Alimento",file:"bencao-paodoceu.png",img:null,draw:drawArt},
+    {id:"bencao-salmo",name:"O Salmo do Pastor",col:"O Bom Pastor",file:"bencao-salmo.png",img:null,draw:drawArt},
+    {id:"bencao-criancas",name:"Deixem as Crianças",col:"O Acolhimento",file:"bencao-criancas.png",img:null,draw:drawArt},
+    {id:"bencao-samaritano",name:"Quem é Meu Vizinho",col:"O Bom Samaritano",file:"bencao-samaritano.png",img:null,draw:drawArt},
+    {id:"bencao-ovelha",name:"A Ovelha Perdida",col:"A Busca",file:"bencao-ovelha.png",img:null,draw:drawArt},
+    {id:"bencao-amor",name:"Amar de Verdade",col:"Ame com Profundidade",file:"bencao-amor.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
@@ -163,7 +176,8 @@
     {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]},
     {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]},
     {id:"alb6",name:"Meu Coração Feliz",sub:"Álbum 6",ids:["coracao-amado","coracao-corajoso","coracao-cuidado","coracao-especial","coracao-bondoso","coracao-partilha","coracao-proposito","coracao-paz"]},
-    {id:"alb7",name:"Momentos de Oração",sub:"Álbum 7",ids:["oracao-manha","oracao-obrigado","oracao-familia","oracao-amigos","oracao-protecao","oracao-cancao","oracao-mascote","oracao-noite"]}
+    {id:"alb7",name:"Momentos de Oração",sub:"Álbum 7",ids:["oracao-manha","oracao-obrigado","oracao-familia","oracao-amigos","oracao-protecao","oracao-cancao","oracao-mascote","oracao-noite"]},
+    {id:"alb8",name:"As Bênçãos de Jesus",sub:"Álbum 8",ids:["bencao-anunciacao","bencao-burrinho","bencao-paodoceu","bencao-salmo","bencao-criancas","bencao-samaritano","bencao-ovelha","bencao-amor"]}
   ];
   var curAlbum=null;
 
