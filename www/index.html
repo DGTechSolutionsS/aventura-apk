@@ -14,8 +14,8 @@
 <meta name="apple-mobile-web-app-title" content="Aventura com Jesus" />
 <link rel="apple-touch-icon" href="assets/img/logos/app_icon_180.png" />
 <link rel="icon" type="image/png" href="assets/img/logos/app_icon_192.png" />
-<link rel="stylesheet" href="app.css?v=158" />
-<script src="lottie.min.js?v=158"></script>
+<link rel="stylesheet" href="app.css?v=159" />
+<script src="lottie.min.js?v=159"></script>
 <!-- SEM gravação de sessão. Smartlook e Microsoft Clarity foram REMOVIDOS: o Programa Famílias
      do Google Play proíbe SDK de replay/gravação de tela em app para crianças. A métrica que
      sobrou é agregada e anônima (ANALYTICS_URL, backend próprio) — sem replay, sem vídeo. -->
@@ -37,7 +37,7 @@
   // DESENHOS DO COLORIR. Vazio = assets/colorir/ dentro do próprio bundle.
   // No APK isto tem que ficar VAZIO: é o que mantém a criança pintando SEM SINAL.
   // Diferente do áudio, que é streamado de propósito pra não engordar o APK, os
-  // desenhos são leves (~1,9 MB nos 5 álbuns) e valem mais offline do que como
+  // desenhos são leves (~2,2 MB nos 6 álbuns) e valem mais offline do que como
   // espaço economizado. Reavaliar lá pelo 5º/6º álbum, quando passar de alguns MB.
   window.COLORIR_BASE = "";
   // PLAY / ANTI-STEERING: o app NÃO pode levar a um pagamento fora da Play Store.
@@ -79,9 +79,9 @@
 <!-- áudio de fundo do player -->
 <audio id="bg-audio" src="assets/sound/background.mp3" loop preload="none"></audio>
 
-<script src="data.js?v=158"></script>
-<script src="app.js?v=158"></script>
-<script defer src="colorir.js?v=158"></script>
+<script src="data.js?v=159"></script>
+<script src="app.js?v=159"></script>
+<script defer src="colorir.js?v=159"></script>
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));

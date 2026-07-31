@@ -128,6 +128,18 @@
     {id:"natal-reis",name:"Os Três Presentes",col:"Os Reis Magos",file:"natal-reis.png",img:null,draw:drawArt},
     {id:"natal-abraao",name:"Contando Estrelas",col:"A Promessa da Noite",file:"natal-abraao.png",img:null,draw:drawArt},
     {id:"natal-boanoite",name:"Boa Noite com Jesus",col:"O Descanso",file:"natal-boanoite.png",img:null,draw:drawArt},
+    /* Álbum 6 — Meu Coração Feliz. PRIMEIRO fora da Bíblia: situações do dia a dia
+       (dividir o brinquedo, cuidar do cachorro, respirar fundo). Cada cena tem um
+       coração grande como motivo recorrente. Dá par visual pras 7 Afirmações, que
+       hoje só existem em áudio. */
+    {id:"coracao-amado",name:"Sou Muito Amado",col:"Sou Amado por Deus",file:"coracao-amado.png",img:null,draw:drawArt},
+    {id:"coracao-corajoso",name:"Posso Ser Corajoso",col:"A Coragem",file:"coracao-corajoso.png",img:null,draw:drawArt},
+    {id:"coracao-cuidado",name:"Deus Cuida de Mim",col:"O Cuidado",file:"coracao-cuidado.png",img:null,draw:drawArt},
+    {id:"coracao-especial",name:"Sou Único",col:"Sou Especial",file:"coracao-especial.png",img:null,draw:drawArt},
+    {id:"coracao-bondoso",name:"Coração Bondoso",col:"A Bondade",file:"coracao-bondoso.png",img:null,draw:drawArt},
+    {id:"coracao-partilha",name:"Dividir é Bom",col:"Compartilhar",file:"coracao-partilha.png",img:null,draw:drawArt},
+    {id:"coracao-proposito",name:"Feito com Amor",col:"O Propósito",file:"coracao-proposito.png",img:null,draw:drawArt},
+    {id:"coracao-paz",name:"Paz no Coração",col:"A Calma",file:"coracao-paz.png",img:null,draw:drawArt},
   ];
   var byDrawId={}; DRAWINGS.forEach(function(d){ byDrawId[d.id]=d; });
   var ALBUMS=[
@@ -136,7 +148,8 @@
     {id:"alb2",name:"Heróis da Bíblia",sub:"Álbum 2",ids:["davi-funda","sansao","moises-mar","jose-manto","jonas","tabuas","bom-amigo","abraao"]},
     {id:"alb3",name:"O Mundo que Deus Criou",sub:"Álbum 3",ids:["criacao-luz","criacao-ceu","criacao-terra","criacao-sol-lua","criacao-peixes","criacao-animais","criacao-jardim","criacao-descanso"]},
     {id:"alb4",name:"Milagres de Jesus",sub:"Álbum 4",ids:["milagre-aguas","milagre-cesta","milagre-tempestade","milagre-cego","milagre-ovelha","milagre-zaqueu","milagre-volta","milagre-bencao"]},
-    {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]}
+    {id:"alb5",name:"Noite de Paz",sub:"Álbum 5",ids:["natal-anjo","natal-viagem","natal-estrela","natal-manjedoura","natal-pastores","natal-reis","natal-abraao","natal-boanoite"]},
+    {id:"alb6",name:"Meu Coração Feliz",sub:"Álbum 6",ids:["coracao-amado","coracao-corajoso","coracao-cuidado","coracao-especial","coracao-bondoso","coracao-partilha","coracao-proposito","coracao-paz"]}
   ];
   var curAlbum=null;
 
