@@ -25,6 +25,13 @@
   var rootEl=null, stylesInjected=false;
   function qs(sel){ return rootEl ? rootEl.querySelector(sel) : null; }
 
+  /* ---------- métrica agregada (mesmo track() do app, mesmo /api/app-event) ----------
+     Só contador anônimo: nome do evento + um valor (hex da cor, id do desenho).
+     Nenhum dado pessoal, nenhuma gravação — é o mesmo formato dos eventos que o app
+     já manda. Sempre guardado: se track() não existir, isto vira no-op silencioso e
+     a pintura segue igual. */
+  function ev(nome, val){ try{ if(typeof track==='function') track(nome, 'colorir', val); }catch(_){ } }
+
   /* ---------- som (Web Audio, procedural) + faíscas de toque ---------- */
   var AC=null, soundOn=true, musicTimer=null, mi=0, lastSpark=0, curView="covers";
   var SCALE=[261.63,293.66,329.63,392.00,440.00,523.25]; // pentatônica suave
@@ -225,7 +232,7 @@
       var b=document.createElement("button");
       b.className="clr-sw"+(hex===curColor?" on":""); b.style.background=hex;
       b.setAttribute("aria-label","Cor "+hex);
-      b.onclick=function(){ curColor=hex; clrRenderPalette(); };
+      b.onclick=function(){ curColor=hex; clrRenderPalette(); ev("colorir_cor", hex); };
       p.appendChild(b);
     });
   }
@@ -284,6 +291,7 @@
     var pt=qs("#clr-ptitle"); if(pt&&pt.childNodes[0]) pt.childNodes[0].nodeValue=d.name;
     var ps=qs("#clr-psub"); if(ps) ps.textContent=d.col;
     clrShow("paint");
+    ev("colorir_desenho", d.id);   // par com colorir_pronto = taxa de abandono por desenho
   }
   function pushUndo(){ if(!ctx) return; undoStack.push(ctx.getImageData(0,0,700,700)); if(undoStack.length>8)undoStack.shift(); }
   function isLn(k){var i=k*4;return (baseData[i]*0.3+baseData[i+1]*0.59+baseData[i+2]*0.11)<LT;}
@@ -339,6 +347,7 @@
     if(typeof save==='function') save();
     if(first && typeof toast==='function') toast('🎉 Figurinha nova! +12 XP  +6 🥖');
     // ---- fim da ponte ----
+    ev("colorir_pronto", id);
     clrRenderTop(); clrRenderPicker(); clrRenderAlbum();
     celebrate(first);
   }
@@ -628,6 +637,7 @@
     clrRenderTop();
     clrRenderPalette();
     clrShow("covers");
+    ev("colorir_abriu");
   }
 
   window.openColorir = openColorir;
