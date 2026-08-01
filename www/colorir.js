@@ -212,12 +212,19 @@
   function clrSaveThumbs(){ try{ localStorage.setItem(THUMB_KEY, JSON.stringify(clrThumbs)); }catch(e){} }
 
   /* ---------- topo (lê nível/pães/xp do estado do app) ---------- */
-  var XP_PER=50; // igual ao checkLevel() do app: level = floor(xp/50)+1
+  // A régua de nível mora no app.js (window.LV) — aqui só se LÊ. Antes havia uma
+  // cópia do "50 XP por nível" nesta linha, que passaria a mentir assim que a régua
+  // do app virasse curva. Fallback pro 50 antigo só se o app for velho demais.
   function clrRenderTop(){
     var st=(typeof state!=="undefined")?state:{coins:0,level:1,xp:0};
     var c=qs("#clr-coins"); if(c) c.textContent=(st.coins||0);
     var l=qs("#clr-lvlnum"); if(l) l.textContent="Nível "+((st.level||1));
-    var f=qs("#clr-xpfill"); if(f) f.style.width=(((st.xp||0)%XP_PER)/XP_PER*100)+"%";
+    var f=qs("#clr-xpfill"); if(f){
+      var pct;
+      try{ pct = window.LV ? window.LV.progressoNivel().pct : ((st.xp||0)%50)/50*100; }
+      catch(_){ pct = 0; }
+      f.style.width = pct+"%";
+    }
   }
 
   /* ---------- paleta ---------- */
@@ -343,9 +350,13 @@
     var id=current.id;
     if(!Array.isArray(state.colored)) state.colored=[];
     var first = state.colored.indexOf(id) < 0;
-    if(first){ state.colored.push(id); state.xp += 12; state.coins += 6; if(typeof checkLevel==='function') checkLevel(); }
+    // +2 XP e não +12: com 72 figurinhas, os 12 davam 864 XP = 17 níveis de uma vez,
+    // contra 0,6 nível/dia de quem faz as missões — o nível deixava de significar
+    // hábito. As MOEDAS ficaram iguais (6): é com elas que a criança compra roupa,
+    // e essa é a recompensa que ela sente por ter pintado.
+    if(first){ state.colored.push(id); state.xp += 2; state.coins += 6; if(typeof checkLevel==='function') checkLevel(); }
     if(typeof save==='function') save();
-    if(first && typeof toast==='function') toast('🎉 Figurinha nova! +12 XP  +6 🥖');
+    if(first && typeof toast==='function') toast('🎉 Figurinha nova! +6 🥖  +2 XP');
     // ---- fim da ponte ----
     ev("colorir_pronto", id);
     clrRenderTop(); clrRenderPicker(); clrRenderAlbum();
@@ -383,7 +394,7 @@
         '<p>Você é um artista da Aventura!</p>'+
         '<div class="clr-stars">⭐⭐⭐</div>'+
         (first
-          ? '<div class="clr-rewards"><div class="clr-rw">🥖 <b>+6</b></div><div class="clr-rw">✨ <b>+12 XP</b></div></div>'+
+          ? '<div class="clr-rewards"><div class="clr-rw">🥖 <b>+6</b></div><div class="clr-rw">✨ <b>+2 XP</b></div></div>'+
             '<div class="clr-newst">🎉 Nova figurinha no álbum! ('+done+'/'+total+')</div>'
           : '<div class="clr-newst">Figurinha atualizada no seu mural 💛</div>')+
         '<button class="clr-btn clr-pronto" id="clr-celok" style="width:100%">Continuar</button>'+

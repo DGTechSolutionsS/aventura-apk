@@ -33,12 +33,29 @@ function toggleRepeat(b){ if(!bgAudio) return; bgAudio.loop=!bgAudio.loop; if(b)
 const LS='theoapp_v2';
 const DEF={ profile:0, onboarded:false, names:{}, photos:{}, favs:[], ratings:{}, streak:1, week:[1,0,0,0,0,0,0],
   xp:0, level:1, coins:40, missionsDone:[], doneToday:[], colored:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
-  lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null,
+  lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null, xpV:0,
   settings:{ pet:true, lang:'Português', faith:'Não denominacional / Independente', dur:true, reminder:'20:00', music:'noise' } };
 let state = load();
 /* blindagem: localStorage corrompido (arrays/obj virando null) não pode derrubar render */
 ['favs','missionsDone','doneToday','colored','week'].forEach(k=>{ if(!Array.isArray(state[k])) state[k]=JSON.parse(JSON.stringify(DEF[k])); });
 ['ratings','names','photos'].forEach(k=>{ if(!state[k]||typeof state[k]!=='object') state[k]={}; });
+/* MIGRAÇÃO da régua de nível (v1 linear xp/50 -> v2 curva). Roda uma vez só.
+   ⚠️ O DEF traz xpV:0 DE PROPÓSITO — não 2. O load() faz {...DEF, ...salvo}, então
+   se o default já fosse 2 todo save antigo herdaria o 2 e a migração nunca rodaria
+   (foi exatamente o bug que o teste pegou: veterano Lv.20 ficava com 1000 XP numa
+   régua que pede 3325). Pra quem é novo o bloco é inofensivo: nível 1 pede 0 XP.
+   Sem isto, a criança que estava no Nível 20 acordaria no 10 — nível de criança
+   NUNCA pode cair. Em vez de rebaixar, ELEVA o XP pro mínimo que a régua nova
+   pede pro nível que ela já tem: mantém o número e deixa o próximo nível a uma
+   distância normal, em vez de virar um muro. */
+if(state.xpV !== 2){
+  try{
+    var _n = Math.max(1, state.level||1);
+    var _alvo = _n<=1 ? 0 : 40*(_n-1) + 15*(_n-2)*(_n-1)/2;
+    if((state.xp||0) < _alvo) state.xp = _alvo;
+  }catch(_){ }
+  state.xpV = 2;
+}
 /* nome REAL da criança (digitado pelos pais) sobrepõe o nome-exemplo do slot */
 function pname(i){ return (state.names&&state.names[i]) || 'Meu pequeno'; }
 function hasKid(i){ return !!(state.names&&state.names[i]); }
@@ -386,7 +403,7 @@ function surpriseCategory(slug){
 /* ---------------- DAVI (pet) ---------------- */
 function screenTheo(){
   renderHeader({help:true});
-  const pct=Math.round((state.xp%50)/50*100);
+  const lv=progressoNivel();
   elScreen.innerHTML=`
     <div class="petscene ${state.decoration?'deco-'+state.decoration:''}">
       <div class="deco-fx"></div>
@@ -403,8 +420,8 @@ function screenTheo(){
       <div class="lvcard">
         <span class="lv-bolt">⚡</span>
         <b class="lv-num">Lv.${state.level}</b>
-        <div class="lv-bar"><i style="width:${pct}%"></i></div>
-        <span class="lv-xp">${state.xp%50}/50 XP</span>
+        <div class="lv-bar"><i style="width:${lv.pct}%"></i></div>
+        <span class="lv-xp">${lv.feito}/${lv.custo} XP</span>
       </div>
       <div class="lv-coins">🥖 ${state.coins}</div>
     </div>
@@ -482,7 +499,25 @@ function feedPet(){
     setPetFace('relaxed'); setTimeout(()=>p&&p.classList.remove('happy'),500); } }, 950);  // satisfeito (olhos fechados)
   setTimeout(()=>{ if(TAB==='theo') screenTheo(); }, 1950);  // re-render: volta ao normal + atualiza XP + reinicia blink
 }
-function checkLevel(){ const nl=Math.floor(state.xp/50)+1; if(nl>state.level){ state.level=nl; toast(`🎉 O Davi subiu pro Nível ${nl}!`);} }
+/* ===== NÍVEL DO DAVI — régua v2 (curva) ==========================================
+   Era `floor(xp/50)+1`: linear e infinito, cada nível custando o mesmo. Com isso
+   qualquer entrada grande de XP virava vários níveis de uma vez — o Colorir inteiro
+   dava 864 XP = 17 níveis, contra 0,6 nível/dia de quem faz as missões. O nível
+   deixava de significar "vem todo dia".
+   Agora cada nível custa mais que o anterior (40, 55, 70, 85...): absorve pico sem
+   punir o hábito diário. Estas 4 funções são a ÚNICA fonte da régua — a barra, o
+   rótulo e o colorir.js leem daqui (window.LV), ninguém mais divide por 50. */
+function xpDoNivel(n){ return 40 + 15*(Math.max(1,n)-1); }                        // custo pra SAIR do nível n
+function xpAcumulado(n){ return n<=1 ? 0 : 40*(n-1) + 15*(n-2)*(n-1)/2; }         // XP total pra ESTAR no nível n
+function nivelPorXp(xp){ let n=1, acc=0;
+  while(n<999){ const c=xpDoNivel(n); if(acc+c > (xp||0)) break; acc+=c; n++; } return n; }
+function progressoNivel(){                                                        // {feito, custo, pct} do nível atual
+  const n=state.level||1, base=xpAcumulado(n), custo=xpDoNivel(n);
+  const feito=Math.max(0, Math.min(custo, (state.xp||0)-base));
+  return { feito, custo, pct: custo ? Math.round(feito/custo*100) : 0 };
+}
+window.LV = { xpDoNivel, xpAcumulado, nivelPorXp, progressoNivel };                // o colorir.js consome isto
+function checkLevel(){ const nl=nivelPorXp(state.xp); if(nl>state.level){ state.level=nl; toast(`🎉 O Davi subiu pro Nível ${nl}!`);} }
 /* —— BRINCAR: várias reações do Davi + estrelinhas em CSS (sem emoji) —— */
 const PLAY_MOVES=['hop','wiggle','bounce','tilt'];
 const PLAY_LINES=['Vamos brincar!','Eba!','De novo, de novo!','Que divertido!','Hihihi!','Mais uma vez!'];
