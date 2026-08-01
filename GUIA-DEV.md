@@ -41,11 +41,40 @@ São **3 peças**. Grave bem:
 ## 2) Fluxo do dia-a-dia: atualizar conteúdo/código (OTA)
 Isso cobre 95% dos updates (texto, telas, lógica, novo conteúdo):
 1. Edita os arquivos em `theo-quiz/app/` (a fonte).
-2. Copia o que mudou pro APK: `cp theo-quiz/app/app.js aventura-apk/www/` (idem `data.js`, `index.html`, etc. se mudaram).
+2. Copia o que mudou pro APK — **mas `app.js`, `index.html` e `sw.js` NÃO se copiam.** Veja a regra abaixo.
 3. `cd aventura-apk && node scripts/publish-ota.mjs <versao> "notas"` — zipa o `www` e sobe pro backend.
 4. Pronto. Os apps instalados pegam sozinhos: **baixam em 2º plano no boot e aplicam no boot seguinte** (abre → fecha → abre).
 
+### ⚠️ O `www/` NÃO é um espelho do `app/` — três arquivos divergem de propósito
+
+`www/app.js`, `www/index.html` e `www/sw.js` **têm código que só existe no APK** e que o
+web não tem. Copiar o do web por cima apaga tudo isso — em silêncio, sem erro nenhum:
+
+| some | o que quebra |
+|---|---|
+| `notifyAppReady()` | o Capgo acha que o bundle não subiu e faz **rollback**: o cliente volta pra versão velha sozinho e o OTA nunca mais entra |
+| `otaCheck()` | o app para de procurar update |
+| `REVIEW_EMAIL` + login escondido | o revisor da Play não entra → **reprovação** |
+| aviso de anti-steering (`index.html`) | violação da política de pagamento da Play |
+| `LocalNotifications` | as notificações de retenção somem |
+
+**Como fazer certo:** portar **só o trecho que mudou**, à mão, e conferir depois que
+os cinco continuam lá:
+
+```bash
+cp theo-quiz/app/{data.js,app.css,colorir.js} aventura-apk/www/   # esses SIM, são idênticos
+# app.js / index.html / sw.js: editar à mão, e então:
+cd aventura-apk
+git diff --ignore-cr-at-eol --stat -- www/     # tem que ser um diff PEQUENO. Centenas de linhas = você copiou por cima.
+for t in notifyAppReady otaCheck REVIEW_EMAIL idToken LocalNotifications; do
+  printf "%-20s %s\n" "$t" "$(grep -c "$t" www/app.js)"; done   # nenhum pode ser 0
+```
+
+(Os arquivos são LF no repo e CRLF no disco — sem `--ignore-cr-at-eol` o diff mostra
+o arquivo inteiro e você não enxerga o que realmente mudou.)
+
 - **Versão:** use números crescentes (ex.: 143, 144...). Ver a atual: `curl https://backendtheo-production.up.railway.app/v1/app/latest`
+- **Cache-bust:** bumpar o `const V` do `sw.js` **e** todos os `?v=` do `index.html` juntos, nos dois lados. Se esquecer um, o service worker serve o app velho.
 - **Offline:** o app funciona sem net; só não recebe o novo. Conectou, atualiza.
 - **Precisa do segredo:** o script lê `aventura-apk/.ota-secret` (gitignored) — tem que ser idêntico à env `OTA_ADMIN_SECRET` no backend (Railway). Use hex puro (sem char especial).
 
