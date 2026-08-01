@@ -1720,9 +1720,15 @@ const DECORATIONS = [
   // 'padrao' é o quarto original. Sem esta entrada não havia como VOLTAR: quem aplicava
   // o Natal ficava com ele pra sempre, e o cartão grátis virava o "padrão" de fato.
   { id:'padrao',    img:'pet_room_bg.webp',        price:0,   label:'Meu Quarto', owned:true },
-  { id:'day-night', img:'pet_room_day-night.webp', price:230, label:'Dia & Noite' },
-  { id:'neon',      img:'pet_room_neon.webp',      price:300, label:'Quarto Neon' },
-  { id:'sunset',    img:'pet_room_sunset.webp',    price:300, label:'Pôr do Sol' },
+  /* Preços medidos, não chutados. Simulando a renda (diária + 3 missões − alimentar),
+     o saldo faz 75 · 120 · 185 · 310 · 535 nos primeiros dias — a escada diária é
+     carregada no fim (10,20,40,100,200,50). Com o piso antigo em 230 havia uma janela
+     morta nos dias 1–3, em que a criança via as decorações e não podia comprar
+     nenhuma; depois do dia 4 as três ficavam ao alcance quase juntas, então não havia
+     escada nenhuma. Agora: dia 2, dia 4 e dia 5. */
+  { id:'day-night', img:'pet_room_day-night.webp', price:90,  label:'Dia & Noite' },
+  { id:'sunset',    img:'pet_room_sunset.webp',    price:190, label:'Pôr do Sol' },
+  { id:'neon',      img:'pet_room_neon.webp',      price:340, label:'Quarto Neon' },
   { id:'christmas', img:'pet_room_christmas.webp', price:0,   label:'Natal', owned:true },
 ];
 
