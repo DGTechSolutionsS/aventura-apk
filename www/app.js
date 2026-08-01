@@ -32,7 +32,7 @@ function toggleRepeat(b){ if(!bgAudio) return; bgAudio.loop=!bgAudio.loop; if(b)
 /* ---------------- estado ---------------- */
 const LS='theoapp_v2';
 const DEF={ profile:0, onboarded:false, names:{}, photos:{}, favs:[], ratings:{}, streak:1, week:[1,0,0,0,0,0,0],
-  xp:0, level:1, coins:40, missionsDone:[], doneToday:[], colored:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
+  xp:0, level:1, coins:40, missionsDone:[], doneToday:[], fedToday:0, colored:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
   lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null, xpV:0, novidade:0,
   settings:{ pet:true, lang:'Português', faith:'Não denominacional / Independente', dur:true, reminder:'20:00', music:'noise' } };
 let state = load();
@@ -476,12 +476,21 @@ function petItemClick(i,btn){
   if(item.action==='joke'){ openJoke(); return; }
   if(item.action==='outfits'){ openOutfitsPanel(); return; }
   if(item.action==='feed'){
+    const resta = FEED_MAX_DIA - (state.fedToday||0);
+    // o preço e o que resta aparecem NO botão: a criança precisa ver a regra antes de
+    // tocar, não descobrir batendo num toast de erro.
+    if(resta<=0){ toast('O Davi já comeu bastante hoje! 🥖 Volte amanhã'); return; }
+    if((state.coins||0) < FEED_CUSTO){ toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} 🥖`); return; }
     btn.classList.add('sel'); foodSel=i;
     // burrinho fica ANSIOSO (boca aberta) esperando a comida — igual ao nativo
     const pet=$('#pet'); if(pet) pet.classList.add('eager');
     setPetFace('happy');
-    $('#feedwrap').innerHTML=`<button class="feed-btn" onclick="feedPet()">Alimentar</button>
-      <button class="feed-cancel" aria-label="Cancelar" onclick="cancelFeed()">✕</button>`;
+    // o ✕ vem ANTES do contador: o contador é display:block e quebraria a linha,
+    // jogando o ✕ pra baixo do botão. "ainda pode 3x" em vez de "3 de 3", que se lê
+    // como se as três já tivessem sido usadas.
+    $('#feedwrap').innerHTML=`<button class="feed-btn" onclick="feedPet()">Alimentar · ${FEED_CUSTO} 🥖</button>
+      <button class="feed-cancel" aria-label="Cancelar" onclick="cancelFeed()">✕</button>
+      <span class="feed-left">${resta===1 ? 'última de hoje' : `ainda pode ${resta}x hoje`}</span>`;
   }
 }
 function cancelFeed(){
@@ -490,11 +499,22 @@ function cancelFeed(){
   setPetFace(null);
   foodSel=-1;
 }
+/* ===== ALIMENTAR — custa pão e tem teto diário ===================================
+   Era +5 XP de graça, sem limite e sem cooldown: segurar o dedo no botão farmava XP
+   infinito e a régua de nível não queria dizer nada. Agora custa 5 🥖 (a moeda do app
+   É pãozinho — alimentar o burrinho sem gastar pão nunca fez sentido) e vale no máximo
+   3x por dia, pra virar ritual em vez de tarefa repetitiva.
+   Com as missões voltando a pagar, entra ~110 🥖/dia e sai 15 🥖/dia. */
+const FEED_CUSTO = 5, FEED_MAX_DIA = 3;
 function feedPet(){
+  // as travas vêm ANTES de qualquer animação — senão o Davi mastiga e nada acontece
+  if((state.fedToday||0) >= FEED_MAX_DIA){ cancelFeed(); toast('O Davi já comeu bastante hoje! 🥖 Volte amanhã'); return; }
+  if((state.coins||0) < FEED_CUSTO){ cancelFeed(); toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} 🥖`); return; }
   $('#feedwrap').innerHTML=''; $('#petbar').querySelectorAll('.it').forEach(b=>b.classList.remove('sel'));
   const pet=$('#pet'); if(pet){ pet.classList.remove('eager'); pet.classList.add('chew'); }
   setPetFace('happy');                                  // mastigando, feliz
-  toast('O Davi ficou feliz! +5 XP'); state.xp+=5; checkLevel(); save(); spawnFeedFx();
+  state.coins-=FEED_CUSTO; state.fedToday=(state.fedToday||0)+1;
+  toast(`O Davi ficou feliz! −${FEED_CUSTO} 🥖  +5 XP`); state.xp+=5; checkLevel(); save(); spawnFeedFx();
   setTimeout(()=>{ const p=$('#pet'); if(p){ p.classList.remove('chew'); p.classList.add('happy');
     setPetFace('relaxed'); setTimeout(()=>p&&p.classList.remove('happy'),500); } }, 950);  // satisfeito (olhos fechados)
   setTimeout(()=>{ if(TAB==='theo') screenTheo(); }, 1950);  // re-render: volta ao normal + atualiza XP + reinicia blink
@@ -1085,9 +1105,22 @@ function rdScroll(){
 
 let _finished=false;
 function finishPlay(id){ if(_finished) return; _finished=true; setTimeout(()=>_finished=false,400); stopContent();
-  if(state.doneToday.indexOf(id)<0) state.doneToday.push(id);
-  if(!state.missionsDone.includes(id)){ state.missionsDone.push(id); state.coins+=10; state.xp+=10; checkLevel(); }
-  save();  // marca feito HOJE + credita 1x
+  /* O prêmio é DIÁRIO, e quem manda nisso é o doneToday (que o dailyReset limpa).
+     Antes o gate era o missionsDone, que NUNCA é limpo — então a missão pagava 3x na
+     vida inteira. Do dia 2 em diante a tela mostrava a missão disponível de novo, a
+     criança fazia, e não vinha nada. O missionsDone continua crescendo porque é
+     contador vitalício: alimenta o "minutos ouvidos" e os gates de review/paywall. */
+  const jaFezHoje = state.doneToday.indexOf(id) >= 0;
+  if(!jaFezHoje) state.doneToday.push(id);
+  if(!state.missionsDone.includes(id)) state.missionsDone.push(id);
+  if(!jaFezHoje){
+    // paga o que o card promete (m.reward = 10/15/15); estava fixo em 10 e duas
+    // missões pagavam menos do que o próprio botão anunciava.
+    const m=(typeof MISSIONS!=='undefined') ? MISSIONS.find(x=>x.id===id) : null;
+    state.coins += (m && m.reward) || 10;
+    state.xp += 10; checkLevel();
+  }
+  save();  // marca feito HOJE + credita 1x POR DIA
   ratingScreen(id); }
 
 function ratingScreen(id){
@@ -1453,6 +1486,7 @@ function dailyReset(){
   }
   state.moodDone=false;                                  // novo dia: humor pode ser feito de novo
   state.doneToday=[];                                    // novo dia: missões voltam a poder ser feitas
+  state.fedToday=0;                                      // novo dia: 3 alimentadas de novo
   const wd=(new Date().getDay()+6)%7; if(Array.isArray(state.week)) state.week[wd]=1;  // marca hoje
   state.lastDay=today;
   save();
