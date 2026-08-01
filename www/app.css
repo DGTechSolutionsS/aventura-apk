@@ -1127,3 +1127,11 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
   @keyframes plBounce{0%,100%{transform:translateX(-50%) scaleY(1) scaleX(1) translateY(0)}28%{transform:translateX(-50%) scaleY(.85) scaleX(1.1) translateY(3%)}55%{transform:translateX(-50%) scaleY(1.1) scaleX(.92) translateY(-9%)}78%{transform:translateX(-50%) scaleY(1) scaleX(1) translateY(0)}}
   @keyframes plTilt{0%,100%{transform:translateX(-50%) rotate(0)}30%{transform:translateX(-50%) rotate(9deg)}62%{transform:translateX(-50%) rotate(-8deg)}}
 }
+
+/* Cartaz de novidades (uma vez por versão) */
+.nv-item{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid rgba(31,77,99,.10);text-align:left}
+.nv-item:last-of-type{border-bottom:none}
+.nv-ic{font-size:26px;line-height:1;flex:0 0 34px;text-align:center}
+/* `> div > b` e não `b`: senão o <b> de ênfase dentro do <p> virava título em bloco */
+.nv-item > div > b{display:block;font-family:'Quicksand',sans-serif;font-size:16px;font-weight:800;margin-bottom:3px}
+.nv-item p{margin:0;font-size:13.5px;line-height:1.5;opacity:.78}

@@ -33,7 +33,7 @@ function toggleRepeat(b){ if(!bgAudio) return; bgAudio.loop=!bgAudio.loop; if(b)
 const LS='theoapp_v2';
 const DEF={ profile:0, onboarded:false, names:{}, photos:{}, favs:[], ratings:{}, streak:1, week:[1,0,0,0,0,0,0],
   xp:0, level:1, coins:40, missionsDone:[], doneToday:[], colored:[], moodDone:false, outfit:null, decoration:null, dailyClaimed:null,
-  lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null, xpV:0,
+  lastDay:null, rewardDay:1, dailyClaimedDate:null, trialStart:null, subscribed:false, notifLastDay:0, user:null, ent:null, xpV:0, novidade:0,
   settings:{ pet:true, lang:'Português', faith:'Não denominacional / Independente', dur:true, reminder:'20:00', music:'noise' } };
 let state = load();
 /* blindagem: localStorage corrompido (arrays/obj virando null) não pode derrubar render */
@@ -700,6 +700,44 @@ function buyItem(kind,id,price){
 /* ============================================================
    DAILY REWARDS (gift box)
    ============================================================ */
+/* ===== CARTAZ DE NOVIDADES — aparece UMA vez por versão =====================
+   state.novidade guarda a última versão vista. Quem já viu não vê de novo, e
+   quem instala agora (novato) também não vê: cartaz de "o que mudou" pra quem
+   nunca usou o antigo é ruído. */
+const NOVIDADE_V = 166;
+function openNovidades(){
+  track('viu_novidades');
+  const figs=(typeof window.openColorir==='function')?72:0;
+  flow(`<div class="ovtop"><span style="width:40px"></span><b></b><span style="width:40px"></span></div>
+    <div class="rewards-sheet">
+      <button class="iconbtn iconbtn-close rw-x" aria-label="Fechar" onclick="fecharNovidades()">✕</button>
+      <div class="rw-title">NOVIDADES</div>
+      <div class="rw-sub">O que chegou de novo pro seu pequeno 💛</div>
+      <div style="padding:4px 18px 0">
+        <div class="nv-item"><span class="nv-ic">🎨</span><div>
+          <b>${figs} figurinhas pra colorir</b>
+          <p>Eram 8, agora são ${figs} — em 9 álbuns: Heróis da Bíblia, a Criação, os Milagres, o Natal e até o dia a dia do Davi.</p></div></div>
+        <div class="nv-item"><span class="nv-ic">⚡</span><div>
+          <b>O app abre mais rápido</b>
+          <p>Os desenhos agora carregam só quando a criança entra no Colorir.</p></div></div>
+        <div class="nv-item"><span class="nv-ic">🫏</span><div>
+          <b>O nível do Davi mudou de régua</b>
+          <p>Agora ele cresce com o hábito de voltar todo dia, e cada nível vale mais que o anterior. <b>Ninguém perdeu nível</b> — o do seu pequeno continua igual.</p></div></div>
+      </div>
+      <button class="btn" style="margin:16px 18px 6px" onclick="fecharNovidades()">Entendi!</button>
+    </div>`,'novidades');
+}
+function fecharNovidades(){ state.novidade=NOVIDADE_V; save(); closeOverlays(); }
+/* mostra no boot, mas só pra quem JÁ usava (tem progresso) e ainda não viu esta versão */
+function maybeNovidades(){
+  try{
+    if(state.novidade>=NOVIDADE_V) return false;
+    const usou = (state.xp>0) || (state.coins>40) || (state.missionsDone||[]).length>0;
+    if(!usou){ state.novidade=NOVIDADE_V; save(); return false; }   // novato: marca como visto e não mostra
+    openNovidades(); return true;
+  }catch(_){ return false; }
+}
+
 function openDailyRewards(){
   track('abriu_recompensas');
   flow(`<div class="ovtop"><span style="width:40px"></span><b></b><span style="width:40px"></span></div>
@@ -1750,6 +1788,10 @@ else { checkEntitlement();   // logado: valida assinatura no Stripe
        var _sp = _jwt() ? pullState() : appLogin(state.user.email, state.user.name).then(pullState);
        if(!_lk) afterSync(_sp, function(){ ensureKidName(); }); }
 setupReminders();
+/* Cartaz de novidades por ultimo e com guarda: so depois do splash sumir (2,0s aqui) e
+   so se NADA estiver aberto — senao apareceria por cima do login, da tela de
+   bloqueio ou do "qual o nome do seu filho?". */
+setTimeout(function(){ try{ if(!elOv.innerHTML.trim()) maybeNovidades(); }catch(_){ } }, 2800);
 (function initSplash(){
   const sp=document.getElementById('splash');
   setTimeout(()=>{ if(!sp) return; sp.classList.add('hide'); setTimeout(()=>sp.remove(),600); }, 2000);
