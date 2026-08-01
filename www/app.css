@@ -25,7 +25,9 @@
   --theo-sh-lg:0 14px 30px rgba(40,70,120,.22);
   --theo-sh-press:0 2px 5px rgba(40,70,120,.18);
 }
-html,body{margin:0;height:100%}
+/* height:100dvh + overflow:hidden: a PÁGINA não rola, quem rola é o .screen por
+   dentro. Sem isso o corpo inteiro deslizava e levava o rodapé junto pra fora. */
+html,body{margin:0;height:100dvh;overflow:hidden;overscroll-behavior:none}
 body{
   font-family:'Lato',system-ui,-apple-system,sans-serif;
   background:#05080f;color:var(--ink);
@@ -38,12 +40,16 @@ img{display:block}
 
 /* moldura do app (estilo telefone) */
 #app{
-  width:100%;max-width:440px;min-height:100vh;position:relative;display:flex;flex-direction:column;
+  width:100%;max-width:440px;height:100dvh;position:relative;display:flex;flex-direction:column;
   background:radial-gradient(120% 60% at 50% 0%,var(--navy-2),var(--navy-0) 70%);
   overflow:hidden;
 }
 
 /* ---------- header global ---------- */
+@supports not (height:100dvh){
+  html,body{height:100%}
+  #app{height:100%}
+}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 8px;gap:10px;z-index:5}
 .hdr .prof{display:flex;align-items:center;gap:8px;background:#fff;border:none;
   border-radius:99px;padding:4px 18px 4px 4px;color:#1f4d63;font-weight:800;font-size:15px;
@@ -57,7 +63,8 @@ img{display:block}
   background:#fff;border:none;color:#1f4d63;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.18)}
 
 /* ---------- área de tela rolável ---------- */
-.screen{flex:1;overflow-y:auto;padding:4px 16px 150px;position:relative;z-index:1}
+.screen{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  padding:4px 16px calc(78px + env(safe-area-inset-bottom) + 24px);position:relative;z-index:1}
 .screen::-webkit-scrollbar{display:none}
 h1.t{font-size:24px;font-weight:800;margin:10px 2px 4px}
 .sec-t{font-size:18px;font-weight:800;margin:22px 2px 10px;display:flex;align-items:center;justify-content:space-between}
@@ -660,7 +667,7 @@ img.ico{width:22px;height:22px;object-fit:contain;display:block}
 .of-owned{position:absolute;top:6px;right:6px;background:#5ac877;color:#fff;font-size:12px;font-weight:800;width:22px;height:22px;border-radius:50%;display:grid;place-items:center}
 
 /* Daily Rewards */
-.rewards-sheet{background:#e0eaf6;max-height:auto;padding:24px 22px calc(28px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;text-align:center}
+.rewards-sheet{background:#e0eaf6;max-height:86dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:24px 22px calc(28px + env(safe-area-inset-bottom));border-radius:24px 24px 0 0;text-align:center}
 .rw-x{position:absolute;right:14px;top:14px}
 .rw-sub{font-size:14px;color:#1f4d63;margin-bottom:14px;line-height:1.4}
 .rw-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:18px}
@@ -1332,3 +1339,12 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
 /* engrenagem desenhada no lugar do emoji ⚙️, que muda de desenho em cada aparelho */
 .hdr .ic.ic-gear{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d4067' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E %3Ccircle cx='12' cy='12' r='3.3'/%3E %3Cpath d='M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z'/%3E %3C/svg%3E");
   background-size:19px 19px;background-position:center;background-repeat:no-repeat}
+
+/* As folhas que sobem de baixo (recompensas, novidades, roupas) nao tinham teto de
+   altura — o .rewards-sheet estava com max-height:auto, que nao limita nada. Em
+   celular baixinho o conteudo passava da tela e o botao de acao ficava inalcancavel:
+   nao dava nem pra fechar. Agora param em 86% da altura DINAMICA e rolam por dentro. */
+.mood-sheet,.outfits-sheet{max-height:86dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+@supports not (height:100dvh){
+  .rewards-sheet,.mood-sheet,.outfits-sheet{max-height:86vh}
+}
