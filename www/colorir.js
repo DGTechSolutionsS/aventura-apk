@@ -356,7 +356,7 @@
     // e essa é a recompensa que ela sente por ter pintado.
     if(first){ state.colored.push(id); state.xp += 2; state.coins += 6; if(typeof checkLevel==='function') checkLevel(); }
     if(typeof save==='function') save();
-    if(first && typeof toast==='function') toast('🎉 Figurinha nova! +6 🥖  +2 XP');
+    if(first && typeof toast==='function') toast('🎉 Figurinha nova! +6 {pao}  +2 XP');
     // ---- fim da ponte ----
     ev("colorir_pronto", id);
     clrRenderTop(); clrRenderPicker(); clrRenderAlbum();
@@ -394,7 +394,7 @@
         '<p>Você é um artista da Aventura!</p>'+
         '<div class="clr-stars">⭐⭐⭐</div>'+
         (first
-          ? '<div class="clr-rewards"><div class="clr-rw">🥖 <b>+6</b></div><div class="clr-rw">✨ <b>+2 XP</b></div></div>'+
+          ? '<div class="clr-rewards"><div class="clr-rw"><i class="pao"></i> <b>+6</b></div><div class="clr-rw">✨ <b>+2 XP</b></div></div>'+
             '<div class="clr-newst">🎉 Nova figurinha no álbum! ('+done+'/'+total+')</div>'
           : '<div class="clr-newst">Figurinha atualizada no seu mural 💛</div>')+
         '<button class="clr-btn clr-pronto" id="clr-celok" style="width:100%">Continuar</button>'+
@@ -442,7 +442,7 @@
           '<div class="clr-lvl">Colorir · <small id="clr-lvlnum">Nível 1</small></div>'+
           '<div class="clr-xpbar"><div class="clr-xpfill" id="clr-xpfill"></div></div>'+
         '</div>'+
-        '<div class="clr-coins">🥖 <span id="clr-coins">0</span></div>'+
+        '<div class="clr-coins"><i class="pao"></i> <span id="clr-coins">0</span></div>'+
         '<button class="clr-sndbtn" id="clr-snd" aria-label="Ligar ou desligar o som">'+ICON.soundOn+'</button>'+
       '</div>'+
       '<div class="clr-tabs">'+

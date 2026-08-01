@@ -1714,21 +1714,26 @@ const OUTFITS = [
 ];
 
 /* Decoração — cenários alternativos do quarto */
+/* `img` = a miniatura é o PRÓPRIO cenário. Antes o cartão era um emoji (🌗🌃🌇🎄) e
+   a criança pagava 300 sem ter visto o que ia levar. */
 const DECORATIONS = [
-  { id:'day-night', emoji:'🌗', price:230, label:'Dia & Noite' },
-  { id:'neon',      emoji:'🌃', price:300, label:'Quarto Neon' },
-  { id:'sunset',    emoji:'🌇', price:300, label:'Pôr do Sol' },
-  { id:'christmas', emoji:'🎄', price:0,   label:'Natal', owned:true },
+  // 'padrao' é o quarto original. Sem esta entrada não havia como VOLTAR: quem aplicava
+  // o Natal ficava com ele pra sempre, e o cartão grátis virava o "padrão" de fato.
+  { id:'padrao',    img:'pet_room_bg.webp',        price:0,   label:'Meu Quarto', owned:true },
+  { id:'day-night', img:'pet_room_day-night.webp', price:230, label:'Dia & Noite' },
+  { id:'neon',      img:'pet_room_neon.webp',      price:300, label:'Quarto Neon' },
+  { id:'sunset',    img:'pet_room_sunset.webp',    price:300, label:'Pôr do Sol' },
+  { id:'christmas', img:'pet_room_christmas.webp', price:0,   label:'Natal', owned:true },
 ];
 
 /* Recompensas Diárias — 6 dias de pão crescente + presente */
 const DAILY_REWARDS = [
-  { day:1, label:'Hoje', emoji:'🥖', amount:10 },
-  { day:2, label:'Dia 2', emoji:'🥖', amount:20 },
-  { day:3, label:'Dia 3', emoji:'🥯', amount:40 },
-  { day:4, label:'Dia 4', emoji:'🍞', amount:100 },
-  { day:5, label:'Dia 5', emoji:'🍞', amount:200 },
-  { day:6, label:'Dia 6', emoji:'🎁', amount:'Presente' },
+  { day:1, label:'Hoje',  ic:'pao', pao:1, amount:10 },
+  { day:2, label:'Dia 2', ic:'pao', pao:1, amount:20 },
+  { day:3, label:'Dia 3', ic:'pao', pao:2, amount:40 },
+  { day:4, label:'Dia 4', ic:'pao', pao:3, amount:100 },
+  { day:5, label:'Dia 5', ic:'pao', pao:3, amount:200 },
+  { day:6, label:'Dia 6', ic:'gift', amount:'Presente' },
 ];
 
 /* Piada do Dia — piadas (Q+A) */

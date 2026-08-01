@@ -283,7 +283,7 @@ h1.t{font-size:24px;font-weight:800;margin:10px 2px 4px}
 
 /* ---------- Theodore (pet) ---------- */
 .petscene{position:relative;border-radius:22px;aspect-ratio:1/1;margin-top:8px;overflow:hidden;border:1px solid var(--line);
-  background:#a9caee url('assets/img/pet_room_bg.webp?v=2') center / 100% 100% no-repeat}
+  background:#a9caee url('assets/img/pet_room_bg.webp?v=168') center / 100% 100% no-repeat}
 .petscene .frame,.petscene .room-window,.petscene .room-floor{display:none}
 /* o presente neon já vem desenhado no fundo (igual ao nativo); aqui só uma área clicável transparente por cima */
 .petscene .gift{position:absolute;top:18%;right:5%;width:17%;height:15%;font-size:0;color:transparent;z-index:3;cursor:pointer;border-radius:12px;transition:transform .12s ease}
@@ -317,7 +317,7 @@ h1.t{font-size:24px;font-weight:800;margin:10px 2px 4px}
 /* fundo = cor EXATA do chão do quarto, pra o chão continuar sem emenda (sensação "sem fim") */
 .screen.theo-screen{background:#9dbbee}
 .hdr.theo-hdr{background:#9bbffd}
-.theo-screen .sec-t{color:#1d4067}
+.theo-screen .sec-t{color:var(--theo-on-bg,#1d4067)}
 .theo-screen .petscene{margin:0 -16px 2px;border-radius:0;border:none}
 /* barra de itens: ícones flat DIRETO no azul (sem card branco), igual ao nativo */
 .theo-screen .petbar{margin-top:14px;gap:12px}
@@ -442,9 +442,18 @@ h1.t{font-size:24px;font-weight:800;margin:10px 2px 4px}
 .toast.show{opacity:1;bottom:160px}
 
 /* coachmark */
-.coach{position:absolute;left:16px;top:64px;z-index:7;background:var(--gold);color:#0b1426;border-radius:14px;
-  padding:11px 14px;font-size:13px;font-weight:700;max-width:230px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+/* Era `position:absolute` no topo, e ficava POR CIMA dos avatares que ele explicava.
+   Agora ocupa espaço no fluxo, empurrando a fileira pra baixo em vez de tapá-la.
+   O padding-right abre lugar pro ✕ sem o texto passar por baixo dele. */
+.coach{position:relative;z-index:7;background:var(--gold);color:#0b1426;border-radius:14px;margin:10px 0 2px;
+  padding:11px 38px 11px 14px;font-size:13px;font-weight:700;max-width:270px;box-shadow:0 10px 26px rgba(0,0,0,.4);
+  transition:opacity .24s ease, transform .24s ease}
 .coach::before{content:'';position:absolute;top:-7px;left:30px;border:7px solid transparent;border-bottom-color:var(--gold);border-top:0}
+.coach-x{position:absolute;top:50%;right:8px;transform:translateY(-50%);width:24px;height:24px;border:0;border-radius:50%;
+  background:rgba(11,20,38,.14);color:#0b1426;font-size:12px;font-weight:800;line-height:1;cursor:pointer}
+/* .avitem é <button>: sem isto ele herda o fundo claro padrão de botão e vira um
+   retângulo BRANCO atrás do avatar redondo, no meio da tela navy. */
+.avitem{background:transparent;border:0;padding:0;box-shadow:none;color:inherit}
 
 /* ===================== reskin: fontes locais (zip) ===================== */
 @font-face{font-family:'Lato';src:url('assets/fonts/Lato-Regular.woff2') format('woff2');font-weight:400;font-display:swap}
@@ -596,15 +605,28 @@ img.ico{width:22px;height:22px;object-fit:contain;display:block}
 
 /* ===================== overlays compartilhados (mood/outfits) ===================== */
 .iconbtn-close{background:var(--red);color:#fff;border:3px solid #fff;width:38px;height:38px;font-size:16px;font-weight:800;box-shadow:0 2px 6px rgba(0,0,0,.25)}
-.mood-bg-room{position:absolute;inset:0;background:url('assets/img/pet_room_bg.webp?v=2') center/cover no-repeat;z-index:1}
+.mood-bg-room{position:absolute;inset:0;background:url('assets/img/pet_room_bg.webp?v=168') center/cover no-repeat;z-index:1}
 /* DECORAÇÕES — mudam a atmosfera do quarto (camada própria, atrás do Theodore) */
 .petscene{position:relative}
-.deco-fx{position:absolute;inset:0;z-index:1;pointer-events:none}
+/* z-index 1 e o Davi ficava POR BAIXO do overlay: comprar "Quarto Neon" deixava o
+   burrinho roxo junto com a parede. Parecia filtro na foto, não decoração de quarto.
+   Agora o overlay fica em 1 e o Davi sobe pra 2 (regra logo abaixo).
+   A transição de opacidade é o que dá o fade — background-image não anima em CSS,
+   então quem faz a troca é o aplicarDeco() no JS: apaga, troca a classe, acende. */
+.deco-fx{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:1;transition:opacity .44s cubic-bezier(.4,0,.2,1)}
+.deco-fx.trocando{opacity:0}
+.petscene .petimg,.petscene .pet{position:relative;z-index:2}
 .mood-bg-room[class*="deco-"]::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none}
-.deco-day-night .deco-fx,.mood-bg-room.deco-day-night::after{background:linear-gradient(180deg,rgba(18,24,70,.32),rgba(8,12,45,.58))}
-.deco-neon .deco-fx,.mood-bg-room.deco-neon::after{background:radial-gradient(circle at 72% 26%,rgba(255,0,200,.34),transparent 58%),radial-gradient(circle at 22% 72%,rgba(0,210,255,.32),transparent 58%),rgba(22,8,42,.34)}
-.deco-sunset .deco-fx,.mood-bg-room.deco-sunset::after{background:linear-gradient(180deg,rgba(255,150,60,.46),rgba(255,90,110,.24) 55%,transparent)}
-.deco-christmas .deco-fx,.mood-bg-room.deco-christmas::after{background:radial-gradient(circle at 50% 12%,rgba(255,80,80,.22),transparent 42%),radial-gradient(circle at 82% 60%,rgba(80,220,120,.22),transparent 42%)}
+/* Cada decoração é um QUARTO INTEIRO, não um filtro de cor. Antes eram gradientes
+   por cima do mesmo quarto — comprar "Quarto Neon" só deixava tudo roxo, e a criança
+   pagava 300 pra ver a mesma cena tingida.
+   As imagens foram desenhadas com a metade de baixo VAZIA de propósito: o Davi fica
+   em z-index 2, em pé no chão do cenário. A camada é a mesma .deco-fx de antes, então
+   o crossfade do aplicarDeco() continua valendo sem mudar nada. */
+.room-day-night,.mood-bg-room.deco-day-night::after{background:url('assets/img/pet_room_day-night.webp?v=168') center/cover no-repeat}
+.room-neon,.mood-bg-room.deco-neon::after{background:url('assets/img/pet_room_neon.webp?v=168') center/cover no-repeat}
+.room-sunset,.mood-bg-room.deco-sunset::after{background:url('assets/img/pet_room_sunset.webp?v=168') center/cover no-repeat}
+.room-christmas,.mood-bg-room.deco-christmas::after{background:url('assets/img/pet_room_christmas.webp?v=168') center/cover no-repeat}
 /* documento legal (Termos/Privacidade) — cartão branco legível */
 .legal-body{background:#fff;color:#234c5e;border-radius:14px;padding:18px 16px;margin:6px 0}
 .legal-body h1{font-size:21px;font-weight:800;color:#1d3d4c;margin:0 0 4px}
@@ -836,7 +858,11 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
    ============================================================ */
 
 /* ---- cabeçalho azul: funde com o céu do quarto ---- */
-.hdr.theo-hdr{background:linear-gradient(180deg,var(--theo-sky-1),var(--theo-sky-2))}
+/* O cabeçalho ficou FIXO e neutro de propósito: ele carrega o nome da criança, a
+   sequência e os ajustes, que são a moldura do app e não parte do quarto. Trocar de
+   cor a cada decoração fazia a marca piscar junto com o cenário. */
+:root{--theo-hdr-bg:#aacdf2}
+.hdr.theo-hdr{background:var(--theo-hdr-bg)}
 .theo-hdr .prof,.theo-hdr .streak,.theo-hdr .ic{box-shadow:var(--theo-sh-sm)}
 .theo-hdr .prof{color:var(--theo-ink)}
 .theo-hdr .ic{color:var(--theo-ink)}
@@ -854,11 +880,27 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
 /* ===================== CENA / QUARTO ===================== */
 .theo-screen .petscene{margin:0 -16px 2px;border:none;border-radius:0;position:relative}
 /* blend topo (header) + leve luz; base funde o chão com o bg da tela */
+/* TOPO: funde com o CABEÇALHO, que agora é fixo. Antes a cor estava escrita no
+   código como rgba(170,205,242,.9) — azul —, então todo cenário novo ganhava um véu
+   azulado em cima que não tinha nada a ver com o ambiente. */
 .theo-screen .petscene::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(170,205,242,.9),rgba(170,205,242,0) 15%),
-    radial-gradient(120% 64% at 50% 6%,rgba(255,255,255,.28),transparent 55%)}
-.theo-screen .petscene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:9%;z-index:1;pointer-events:none;
-  background:linear-gradient(180deg,rgba(157,187,238,0),var(--theo-sky-2))}
+  background:radial-gradient(120% 64% at 50% 6%,rgba(255,255,255,.28),transparent 55%)}
+/* Camada separada só pra emendar com o cabeçalho: cor chapada + máscara, mesma
+   técnica do pé. Interpolar do azul do cabeçalho até "branco transparente" passava
+   por tons claros que não existem em nenhum dos dois lados — era o corte visível. */
+.theo-screen .petscene .hdr-blend{position:absolute;left:0;right:0;top:0;height:13%;z-index:1;pointer-events:none;
+  background:var(--theo-hdr-bg);
+  -webkit-mask:linear-gradient(180deg,rgba(0,0,0,1),rgba(0,0,0,0) 92%);
+          mask:linear-gradient(180deg,rgba(0,0,0,1),rgba(0,0,0,0) 92%)}
+/* PÉ: a emenda dura vinha de INTERPOLAR de um azul transparente até a cor do
+   ambiente — no meio do caminho o navegador passa por tons que não existem em
+   nenhum dos dois lados. Aqui a cor é chapada e quem faz o degradê é a máscara,
+   então o que aparece é sempre exatamente a cor do fundo, só que mais ou menos
+   opaca. Subiu de 9% pra 18% de altura pra emenda virar passagem. */
+.theo-screen .petscene::after{content:"";position:absolute;left:0;right:0;bottom:0;height:18%;z-index:1;pointer-events:none;
+  background:var(--theo-sky-2);
+  -webkit-mask:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,1) 88%);
+          mask:linear-gradient(180deg,rgba(0,0,0,0),rgba(0,0,0,1) 88%)}
 /* poeira/brilhos flutuando (decorativo) */
 .scene-fx{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
 .scene-fx i{position:absolute;width:9px;height:9px;border-radius:50%;opacity:0;
@@ -935,7 +977,7 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
 
 /* ===================== TÍTULOS DE SEÇÃO ===================== */
 .theo-screen .sec-t{position:relative;justify-content:flex-start;padding-left:15px;
-  color:var(--theo-ink);font-size:18px;font-weight:800;margin:22px 2px 12px}
+  color:var(--theo-on-bg,var(--theo-ink));font-size:18px;font-weight:800;margin:22px 2px 12px}
 .theo-screen .sec-t::before{content:"";position:absolute;left:2px;top:50%;transform:translateY(-50%);
   width:6px;height:18px;border-radius:99px;background:var(--theo-cyan)}
 
@@ -945,8 +987,8 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
 .theo-screen .meetcard:hover .meetcard-img{transform:translateY(-3px);box-shadow:var(--theo-sh-lg)}
 .theo-screen .meetcard:active .meetcard-img{transform:scale(.98)}
 .theo-screen .meetcard-heart{width:32px;height:32px;background:rgba(255,255,255,.92);color:var(--theo-cyan-d);box-shadow:var(--theo-sh-sm)}
-.theo-screen .meetcard-ti{color:var(--theo-ink)}
-.theo-screen .meetcard-ty{color:var(--theo-ink-soft)}
+.theo-screen .meetcard-ti{color:var(--theo-on-bg,var(--theo-ink))}
+.theo-screen .meetcard-ty{color:var(--theo-on-bg-soft,var(--theo-ink-soft))}
 
 /* ===================== OVERLAYS (humor/roupas/recompensas/piada) ===================== */
 .ov{animation:slideup var(--d-slow) var(--ease-out)}
@@ -1136,3 +1178,157 @@ button:focus-visible,[role="button"]:focus-visible,select:focus-visible{outline:
 /* `> div > b` e não `b`: senão o <b> de ênfase dentro do <p> virava título em bloco */
 .nv-item > div > b{display:block;font-family:'Quicksand',sans-serif;font-size:16px;font-weight:800;margin-bottom:3px}
 .nv-item p{margin:0;font-size:13.5px;line-height:1.5;opacity:.78}
+
+/* ===== Pãozinho — a moeda do app ================================================
+   Era o emoji 🥖, desenhado pelo sistema: o do Android não é o do iPhone, e a moeda
+   do app não tinha cara própria. Como SVG no CSS fica idêntico em todo aparelho,
+   pesa 545 bytes, não faz requisição e não depende de fonte de emoji.
+   Medido em `em` de propósito: acompanha o tamanho do texto de cada lugar (12px no
+   chip da missão, 17px no saldo) sem precisar de tamanho fixo em 8 chamadas.
+   Os toasts continuam com o emoji — toast() usa textContent. */
+.pao{display:inline-block;width:1.08em;height:1.08em;vertical-align:-.19em;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'%3E %3Cg transform='rotate(-28 16 16)'%3E %3Crect x='3.4' y='11.2' width='25.2' height='9.6' rx='4.8' fill='%23b9702c' stroke='%238f5620' stroke-width='1.7'/%3E %3Crect x='3.6' y='11.4' width='24.8' height='7.9' rx='3.95' fill='%23dd9445'/%3E %3Crect x='6' y='12.6' width='20' height='2.8' rx='1.4' fill='%23f2c179'/%3E %3Cg stroke='%23fce9c4' stroke-width='2.1' stroke-linecap='round'%3E %3Cpath d='M11.6 15.1l-1.3 3'/%3E %3Cpath d='M16.4 15.1l-1.3 3'/%3E %3Cpath d='M21.2 15.1l-1.3 3'/%3E %3C/g%3E %3C/g%3E %3C/svg%3E") center/contain no-repeat}
+
+/* ===== Ícones dos Ajustes =======================================================
+   Eram emojis (📲 🔗 ❓ 🎁 ⭐ 🎚️ ⏰ 👤 💳 ✉️ 🚪 🗑️ 🌐 ✝️ ⏱️ 🙈): cada aparelho
+   desenhava de um jeito, alturas e pesos diferentes, e a lista ficava desalinhada.
+   Aqui é um traço só, mesma grade de 24, mesma espessura.
+   mask + currentColor: o ícone herda a cor da linha, então "Apagar dados" fica
+   vermelho sem precisar de um segundo arquivo. Total: 16 ícones. */
+.si{display:inline-block;width:22px;height:22px;flex:0 0 22px;background:currentColor;vertical-align:-5px;
+  -webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;
+  -webkit-mask-position:center;mask-position:center}
+.si-instalar{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='6' y='2.5' width='12' height='19' rx='2.6'/%3E%3Cpath d='M12 8v6m0 0l-2.4-2.4M12 14l2.4-2.4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='6' y='2.5' width='12' height='19' rx='2.6'/%3E%3Cpath d='M12 8v6m0 0l-2.4-2.4M12 14l2.4-2.4'/%3E%3C/svg%3E")}
+.si-share{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5.5' r='2.6'/%3E%3Ccircle cx='6' cy='12' r='2.6'/%3E%3Ccircle cx='18' cy='18.5' r='2.6'/%3E%3Cpath d='M8.3 10.8l7.4-4m0 10.4l-7.4-4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='18' cy='5.5' r='2.6'/%3E%3Ccircle cx='6' cy='12' r='2.6'/%3E%3Ccircle cx='18' cy='18.5' r='2.6'/%3E%3Cpath d='M8.3 10.8l7.4-4m0 10.4l-7.4-4'/%3E%3C/svg%3E")}
+.si-faq{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.4 9.4a2.6 2.6 0 1 1 3.4 2.5c-.5.2-.8.7-.8 1.2v.6'/%3E%3Ccircle cx='12' cy='17' r='1' fill='%23fff' stroke='none'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M9.4 9.4a2.6 2.6 0 1 1 3.4 2.5c-.5.2-.8.7-.8 1.2v.6'/%3E%3Ccircle cx='12' cy='17' r='1' fill='%23fff' stroke='none'/%3E%3C/svg%3E")}
+.si-presente{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='9.5' width='18' height='11.5' rx='2'/%3E%3Cpath d='M3 13.5h18M12 9.5V21'/%3E%3Cpath d='M12 9.5S10.6 4 8 4a2.2 2.2 0 0 0 0 5.5zM12 9.5S13.4 4 16 4a2.2 2.2 0 0 1 0 5.5z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='9.5' width='18' height='11.5' rx='2'/%3E%3Cpath d='M3 13.5h18M12 9.5V21'/%3E%3Cpath d='M12 9.5S10.6 4 8 4a2.2 2.2 0 0 0 0 5.5zM12 9.5S13.4 4 16 4a2.2 2.2 0 0 1 0 5.5z'/%3E%3C/svg%3E")}
+.si-estrela{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.2 6-5.5-3-5.5 3 1.2-6L3.2 9.6l6.1-.8z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3.2l2.7 5.6 6.1.8-4.5 4.2 1.2 6-5.5-3-5.5 3 1.2-6L3.2 9.6l6.1-.8z'/%3E%3C/svg%3E")}
+.si-conteudo{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h10M18 7h2M4 12h4M12 12h8M4 17h9M17 17h3'/%3E%3Ccircle cx='16' cy='7' r='2'/%3E%3Ccircle cx='10' cy='12' r='2'/%3E%3Ccircle cx='15' cy='17' r='2'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 7h10M18 7h2M4 12h4M12 12h8M4 17h9M17 17h3'/%3E%3Ccircle cx='16' cy='7' r='2'/%3E%3Ccircle cx='10' cy='12' r='2'/%3E%3Ccircle cx='15' cy='17' r='2'/%3E%3C/svg%3E")}
+.si-lembrete{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18.5 16.5V11a6.5 6.5 0 1 0-13 0v5.5L4 18.5h16z'/%3E%3Cpath d='M10 21.5a2.4 2.4 0 0 0 4 0'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18.5 16.5V11a6.5 6.5 0 1 0-13 0v5.5L4 18.5h16z'/%3E%3Cpath d='M10 21.5a2.4 2.4 0 0 0 4 0'/%3E%3C/svg%3E")}
+.si-conta{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.8'/%3E%3Cpath d='M4.5 20.5c0-3.9 3.4-6.5 7.5-6.5s7.5 2.6 7.5 6.5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='8' r='3.8'/%3E%3Cpath d='M4.5 20.5c0-3.9 3.4-6.5 7.5-6.5s7.5 2.6 7.5 6.5'/%3E%3C/svg%3E")}
+.si-assinatura{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2.5' y='5' width='19' height='14' rx='2.6'/%3E%3Cpath d='M2.5 10h19M6 15h4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2.5' y='5' width='19' height='14' rx='2.6'/%3E%3Cpath d='M2.5 10h19M6 15h4'/%3E%3C/svg%3E")}
+.si-contato{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2.5' y='5' width='19' height='14' rx='2.6'/%3E%3Cpath d='M3.5 7l8.5 6 8.5-6'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2.5' y='5' width='19' height='14' rx='2.6'/%3E%3Cpath d='M3.5 7l8.5 6 8.5-6'/%3E%3C/svg%3E")}
+.si-sair{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 3.5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h8.5'/%3E%3Cpath d='M17 8.5l3.5 3.5-3.5 3.5M20 12H9.5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 3.5H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h8.5'/%3E%3Cpath d='M17 8.5l3.5 3.5-3.5 3.5M20 12H9.5'/%3E%3C/svg%3E")}
+.si-apagar{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h16M9.5 6.5V4h5v2.5'/%3E%3Cpath d='M6.5 6.5l1 13.5a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13.5'/%3E%3Cpath d='M10.5 10.5v7M13.5 10.5v7'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 6.5h16M9.5 6.5V4h5v2.5'/%3E%3Cpath d='M6.5 6.5l1 13.5a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13.5'/%3E%3Cpath d='M10.5 10.5v7M13.5 10.5v7'/%3E%3C/svg%3E")}
+.si-idioma{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3.2 12h17.6M12 3.2c2.4 2.4 3.6 5.4 3.6 8.8s-1.2 6.4-3.6 8.8c-2.4-2.4-3.6-5.4-3.6-8.8S9.6 5.6 12 3.2z'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M3.2 12h17.6M12 3.2c2.4 2.4 3.6 5.4 3.6 8.8s-1.2 6.4-3.6 8.8c-2.4-2.4-3.6-5.4-3.6-8.8S9.6 5.6 12 3.2z'/%3E%3C/svg%3E")}
+.si-fe{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v18M7 8h10'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 3v18M7 8h10'/%3E%3C/svg%3E")}
+.si-duracao{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 8.5V13l3 2M9.5 2.5h5'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='13' r='8'/%3E%3Cpath d='M12 8.5V13l3 2M9.5 2.5h5'/%3E%3C/svg%3E")}
+.si-oculto{-webkit-mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3Cpath d='M4 20L20 4'/%3E%3C/svg%3E");mask-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 12S6 6 12 6s9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6z'/%3E%3Ccircle cx='12' cy='12' r='2.8'/%3E%3Cpath d='M4 20L20 4'/%3E%3C/svg%3E")}
+.si-davi{width:22px;height:22px;flex:0 0 22px;border-radius:6px;object-fit:cover;vertical-align:-5px}
+
+/* ===== Foto de perfil: recorte no círculo ========================================
+   O <img> vinha com width/height:100% inline, mas os quatro contêineres são
+   display:grid com place-items:center — e nesse contexto a altura percentual NÃO
+   resolve. A imagem assumia a proporção natural: uma selfie em retrato de 154x256
+   virava 34x57 na bolinha de 34px do cabeçalho e, sem overflow:hidden ali,
+   escorria pra fora por baixo. (O .avitem e o .child-av tinham overflow:hidden,
+   então lá o estrago era invisível — a foto só aparecia cortada torta.)
+   position:absolute tira a imagem do dimensionamento do grid e acaba com a
+   ambiguidade; o object-fit:cover recorta pelo centro em qualquer proporção. */
+.hdr .prof .av,.avitem .a,.child-av,.acct-av{position:relative;overflow:hidden}
+.av-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+
+/* o quarto original também é um cenário: assim o cartão "Meu Quarto" tem o que
+   mostrar e o crossfade tem de onde partir e pra onde ir */
+.room-padrao,.mood-bg-room.deco-padrao::after{background:url('assets/img/pet_room_bg.webp?v=168') center/cover no-repeat}
+
+/* ===== O ambiente tinge a TELA INTEIRA ==========================================
+   Antes só o quadro do quarto mudava: o cenário laranja do pôr do sol encostava
+   direto no azul do rodapé e a emenda ficava dura. Estas duas variáveis já mandam
+   no cabeçalho e no fundo da tela do Davi, então basta redefini-las por decoração
+   que a tela toda acompanha o ambiente. As cores NÃO foram escolhidas no olho:
+   são a média real dos 26px do topo e da base de cada imagem.
+   A transição de 0.42s casa com o crossfade do aplicarDeco(). */
+.screen.theo-screen,.hdr.theo-hdr{transition:background .42s ease}
+.theo-screen.deco-padrao{--theo-sky-1:#bed2f0;--theo-sky-2:#9ebcef}
+.theo-screen.deco-day-night{--theo-sky-1:#2b3b69;--theo-sky-2:#ebcdc3}
+.theo-screen.deco-neon{--theo-sky-1:#3e4881;--theo-sky-2:#394170}
+.theo-screen.deco-sunset{--theo-sky-1:#f7c2ac;--theo-sky-2:#f8c899}
+.theo-screen.deco-christmas{--theo-sky-1:#e2f0e7;--theo-sky-2:#f3dabf}
+
+/* ===== Presente das recompensas diárias =========================================
+   O presente bonito SEMPRE existiu — estava pintado dentro da arte do quarto (o
+   letreiro de neon), e o .gift era só um vão invisível por cima dele. Por isso ele
+   sumia nos cenários novos, que não têm presente pintado.
+   Em vez de desenhar outro (o que deixava DOIS presentes diferentes, um por quarto),
+   extraí o de neon da própria arte com alfa e apaguei ele do fundo. Agora é um só, o
+   mesmo em todos os ambientes, e é exatamente o desenho que já era.
+   As medidas são a caixa real que ele ocupava na arte de 1024px. */
+.petscene .gift{left:82.81%;right:auto;top:20.51%;width:17.19%;height:16.99%;font-size:0;
+  background:center/contain no-repeat;transition:background-image .3s ease}
+/* padrao: quarto azul pastel com móveis de madeira — âmbar, a mesma família do dourado do app */
+.petscene.deco-padrao .gift{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%23ff9f2e' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%23ff9f2e' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23ffe4c4' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E")}
+/* day-night: noite de parede índigo — âmbar quente, lê como luminária acesa */
+.petscene.deco-day-night .gift{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%23ffc24d' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%23ffc24d' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23ffeecd' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E")}
+/* neon: aqui o rosa É o ambiente: os outros letreiros do quarto são desta cor */
+.petscene.deco-neon .gift{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%23ff4fd8' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%23ff4fd8' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23ffcef4' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E")}
+/* sunset: pôr do sol laranja — ciano é o complementar, é o que faz o neon saltar */
+.petscene.deco-sunset .gift{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%2325d0e6' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%2325d0e6' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23c2f2f8' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E")}
+/* christmas: quarto verde-menta de Natal — vermelho, o par óbvio */
+.petscene.deco-christmas .gift{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%23ff4d4d' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%23ff4d4d' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23ffcdcd' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E")}
+.rw-gift{display:inline-block;width:42px;height:42px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3Cfilter id='g1' x='-60%' y='-60%' width='220%' height='220%'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='g2' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='2.6'/%3E%3C/filter%3E%3C/defs%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cg id='p'%3E%3Crect x='24' y='52' width='72' height='46' rx='7'/%3E%3Crect x='18' y='36' width='84' height='18' rx='6'/%3E%3Cpath d='M60 36v62'/%3E%3Cpath d='M60 36S52 14 40 14a10 10 0 0 0 0 22zM60 36s8-22 20-22a10 10 0 0 1 0 22z'/%3E%3C/g%3E%3Cuse href='%23p' stroke='%23ff9f2e' stroke-width='13' filter='url(%23g1)' opacity='.85'/%3E%3Cuse href='%23p' stroke='%23ff9f2e' stroke-width='7' filter='url(%23g2)' opacity='.95'/%3E%3Cuse href='%23p' stroke='%23ffe4c4' stroke-width='2.6'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat}
+/* a escada cresce pelo TAMANHO do pãozinho (1 -> 2 -> 3), que era o que os emojis
+   🥖 🥯 🍞 tentavam dizer trocando de pão a cada dia */
+.rw-p1{width:26px;height:26px}
+.rw-p2{width:32px;height:32px}
+.rw-p3{width:38px;height:38px}
+.rw-emoji .pao{vertical-align:middle}
+
+
+/* ===== Texto que fica DIRETO sobre o fundo ======================================
+   Só o "Missões do Dia" encosta no fundo da tela; o resto (Lv., moedas, rótulos da
+   barra) está sobre cartão claro e não pode mudar junto — se mudasse, o texto branco
+   cairia em cima do cartão branco.
+   O quarto Neon deixa o fundo em #394170, escuro, e o título navy sumia. A escolha
+   não é no olho: é a luminância relativa (BT.709) da cor de base de cada ambiente —
+   abaixo de 0,42 o texto vai claro, acima vai escuro. */
+.theo-screen.deco-padrao{--theo-on-bg:#1d4067}   /* base #9ebcef · lum 0.49 · texto escuro */
+.theo-screen.deco-day-night{--theo-on-bg:#1d4067}   /* base #ebcdc3 · lum 0.65 · texto escuro */
+.theo-screen.deco-neon{--theo-on-bg:#eaf0fb}   /* base #394170 · lum 0.06 · texto claro */
+.theo-screen.deco-sunset{--theo-on-bg:#1d4067}   /* base #f8c899 · lum 0.64 · texto escuro */
+.theo-screen.deco-christmas{--theo-on-bg:#1d4067}   /* base #f3dabf · lum 0.73 · texto escuro */
+
+/* os nomes das historias tambem ficam direto no fundo — mesma regra */
+.theo-screen.deco-padrao{--theo-on-bg-soft:#5e7da3}
+.theo-screen.deco-day-night{--theo-on-bg-soft:#5e7da3}
+.theo-screen.deco-neon{--theo-on-bg-soft:#b9c7e4}
+.theo-screen.deco-sunset{--theo-on-bg-soft:#5e7da3}
+.theo-screen.deco-christmas{--theo-on-bg-soft:#5e7da3}
+
+/* A tela tem padding-top:4px. Na aba do Davi essa folga fica ENTRE o cabeçalho e a
+   cena, e nela aparece o fundo da tela — que segue o ambiente. No quarto Neon o
+   fundo é índigo escuro, então os 4px viravam uma linha escura cortando logo abaixo
+   do cabeçalho claro. Aqui a cena encosta no cabeçalho e a emenda fica só com o
+   degradê do .hdr-blend. */
+.screen.theo-screen{padding-top:0}
+
+/* ===== Top 10: o número de DOIS dígitos ==========================================
+   O numeral é 120px numa calha de 36px — cabe um dígito. No 10º card o "0" ficava
+   atrás da capa (z-index maior) e a lista parecia ter dois "1". Dois dígitos ganham
+   calha maior, corpo um pouco menor e as letras mais juntas, mantendo o mesmo peso
+   visual dos de um dígito. */
+.topcard.r2{width:214px;padding-left:50px}   /* 164px de imagem + 50 de calha = mesma capa dos outros */
+.topcard.r2 .topcard-rank{font-size:104px;left:-8px;letter-spacing:-10px}
+
+/* ===== Sequência ================================================================
+   Era um título solto, um parágrafo e uma pilulinha com emoji 🔥 — três blocos sem
+   relação visual, no meio do fundo escuro. Virou um cartão só, com a chama
+   desenhada na mesma linguagem do pãozinho e o número em destaque. */
+/* Era dourado sobre o fundo azul-escuro e o cartão saltava como se fosse um aviso.
+   No azul ele assenta no fundo; quem destaca é a chama e o número, que ficam
+   quentes justamente por contraste. */
+.streak-card{display:flex;align-items:center;gap:14px;margin:22px 2px 14px;padding:16px 18px;
+  background:linear-gradient(135deg,rgba(96,142,214,.20),rgba(96,142,214,.07));
+  border:1px solid rgba(126,168,232,.26);border-radius:20px}
+.streak-flame{flex:0 0 46px;width:46px;height:46px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E %3Cpath d='M16 3.2c4.6 4.3 9.4 8.2 9.4 14.1A9.4 9.4 0 0 1 16 27.4a9.4 9.4 0 0 1-9.4-10.1C6.6 12.6 10.4 8.8 16 3.2z' fill='%23f0913a' stroke='%231d4067' stroke-width='2.1' stroke-linejoin='round'/%3E %3Cpath d='M16 13.4c2.3 2.2 4.3 3.9 4.3 6.6A4.3 4.3 0 0 1 16 24.2a4.3 4.3 0 0 1-4.3-4.2c0-2.5 1.9-4.3 4.3-6.6z' fill='%23fadf9a' stroke='%231d4067' stroke-width='1.7' stroke-linejoin='round'/%3E %3C/svg%3E") center/contain no-repeat;
+  filter:drop-shadow(0 3px 8px rgba(240,145,58,.35))}
+.streak-txt{min-width:0}
+.streak-n{font-family:'Quicksand',sans-serif;font-weight:800;font-size:26px;color:var(--gold);line-height:1.05}
+.streak-n span{font-size:15px;font-weight:800;color:#fff;opacity:.92}
+.streak-d{color:var(--ink-soft);font-size:13px;line-height:1.45;margin-top:4px}
+
+/* engrenagem desenhada no lugar do emoji ⚙️, que muda de desenho em cada aparelho */
+.hdr .ic.ic-gear{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231d4067' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E %3Ccircle cx='12' cy='12' r='3.3'/%3E %3Cpath d='M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z'/%3E %3C/svg%3E");
+  background-size:19px 19px;background-position:center;background-repeat:no-repeat}

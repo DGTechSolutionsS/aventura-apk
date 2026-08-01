@@ -163,7 +163,18 @@ function compressImage(file, cb){
 
 /* ---------------- utils ---------------- */
 let toastT;
-function toast(msg){ elToast.textContent=msg; elToast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>elToast.classList.remove('show'),1800); }
+/* O token {pao} vira o ícone da moeda. Montado com createTextNode/createElement e
+   NUNCA com innerHTML: um dos toasts interpola o nome que a mãe digitou ("Que bom te
+   ver, X!"), então parsear a mensagem como HTML seria abrir injeção pra economizar um
+   ícone. Aqui o texto nunca é parseado — só o token conhecido vira elemento. */
+function toast(msg){
+  elToast.textContent='';
+  String(msg).split('{pao}').forEach(function(parte, i){
+    if(i){ var ic=document.createElement('i'); ic.className='pao'; elToast.appendChild(ic); }
+    if(parte) elToast.appendChild(document.createTextNode(parte));
+  });
+  elToast.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>elToast.classList.remove('show'),1800);
+}
 /* evento nomeado de comportamento -> métrica AGREGADA no backend próprio (sem replay/gravação) */
 function track(event, tagKey, tagVal){
   try{
@@ -205,7 +216,7 @@ function renderHeader(opts={}){
     <div class="hr">
       ${opts.help?`<button class="ic" aria-label="Perguntas frequentes" onclick="openPetFaq()">?</button>`:''}
       <span class="streak" aria-label="${state.streak} dias de sequência">${state.streak} 🔥</span>
-      <button class="ic" aria-label="Ajustes" onclick="openSettings()">⚙️</button>
+      <button class="ic ic-gear" aria-label="Ajustes" onclick="openSettings()"></button>
     </div>`;
 }
 function renderTabs(){ elTab.innerHTML=TABS.filter(([k])=>k!=='theo'||state.settings.pet).map(([k,l,i])=>`<button class="tab ${TAB===k?'on':''}" onclick="go('${k}')"><img class="ico icoW" src="${i}" alt="">${l}</button>`).join(''); }
@@ -217,6 +228,11 @@ function render(){
   catch(err){ console.error('render', err); elScreen.innerHTML='<div style="padding:48px 24px;text-align:center;color:var(--ink-soft,#fff)">Ops, algo deu errado ao abrir esta tela.<br>Toque em outra aba pra continuar.</div>'; }
   elScreen.classList.toggle('theo-screen', TAB==='theo');   // fundo azul só na tela do Davi
   elHdr.classList.toggle('theo-hdr', TAB==='theo');
+  // o ambiente escolhido tinge a tela e o cabeçalho, não só o quadro do quarto
+  [elScreen, elHdr].forEach(function(el){
+    el.className = el.className.replace(/\s*deco-(?!fx\b)[a-z-]+/g,'');
+    if(TAB==='theo') el.classList.add('deco-'+(state.decoration||'padrao'));
+  });
   elScreen.scrollTop=0; updateMini();
 }
 
@@ -294,9 +310,13 @@ function screenToday(){
     <div class="hscroll top10">${TOP10_BR.map(top10Card).join('')}</div>
 
     <div class="streak-info">
-      <div class="streak-info-t">Sua sequência atual</div>
-      <div class="streak-info-d">Complete uma meditação todo dia pra aumentar sua sequência.</div>
-      <div class="streak-info-chip">${state.streak} 🔥</div>
+      <div class="streak-card">
+        <i class="streak-flame"></i>
+        <div class="streak-txt">
+          <div class="streak-n">${state.streak} <span>${state.streak===1?'dia':'dias'} seguidos</span></div>
+          <div class="streak-d">Complete uma meditação todo dia pra aumentar sua sequência.</div>
+        </div>
+      </div>
     </div>`;
   initMissionAnims();
 }
@@ -349,7 +369,7 @@ function newCard(n){
   </button>`;
 }
 function top10Card(t){
-  return `<button class="topcard" onclick="openCard('${t.id||''}','${esc(t.title)}')">
+  return `<button class="topcard ${String(t.rank).length>1?'r2':''}" onclick="openCard('${t.id||''}','${esc(t.title)}')">
     <span class="topcard-rank">${t.rank}</span>
     <div class="topcard-img"><img src="assets/img/${t.img}" alt=""></div>
     <div class="topcard-bd"><div class="topcard-ti">${esc(t.title)}</div><div class="topcard-ty">${t.kind}</div></div>
@@ -405,12 +425,13 @@ function screenTheo(){
   renderHeader({help:true});
   const lv=progressoNivel();
   elScreen.innerHTML=`
-    <div class="petscene ${state.decoration?'deco-'+state.decoration:''}">
-      <div class="deco-fx"></div>
+    <div class="petscene deco-${state.decoration||'padrao'}">
+      <div class="deco-fx room-${state.decoration||'padrao'}"></div>
+      <div class="hdr-blend"></div>
       <div class="room-window"></div>
       <div class="room-floor"></div>
       <div class="scene-fx" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-      <span class="frame">🖼️</span><span class="gift" role="button" tabindex="0" aria-label="Recompensas diárias" onclick="openDailyRewards()"><span class="gift-ring"></span>🎁</span>
+      <span class="frame">🖼️</span><span class="gift" role="button" tabindex="0" aria-label="Recompensas diárias" onclick="openDailyRewards()"><span class="gift-ring"></span></span>
       <div class="pet-stage"><div class="pet-shadow"></div><img class="petimg" id="pet" src="assets/img/pet_donkey.webp?v=13" alt="Davi" onclick="petPoke()"><div class="pet-wear"></div></div>
       <div id="pet-bubble" class="pet-bubble" style="display:none"></div>
     </div>
@@ -423,12 +444,12 @@ function screenTheo(){
         <div class="lv-bar"><i style="width:${lv.pct}%"></i></div>
         <span class="lv-xp">${lv.feito}/${lv.custo} XP</span>
       </div>
-      <div class="lv-coins">🥖 ${state.coins}</div>
+      <div class="lv-coins"><i class="pao"></i> ${state.coins}</div>
     </div>
     <div class="sec-t">Missões do Dia</div>
     <div class="theo-missions">${MISSIONS.map(m=>{ const v=MISSION_VISUALS[m.id]||{label:m.title,emoji:'⭐'}; return `
       <button class="theo-mcard ${state.doneToday.includes(m.id)?'done':''}" onclick="openDetail('${m.id}')" aria-label="${v.label||m.title}">
-        <span class="theo-mrw">+${m.reward} 🥖</span>${state.doneToday.includes(m.id)?'<span class="theo-mdone" aria-label="Conclu\u00edda">✓</span>':''}
+        <span class="theo-mrw">+${m.reward} <i class="pao"></i></span>${state.doneToday.includes(m.id)?'<span class="theo-mdone" aria-label="Conclu\u00edda">✓</span>':''}
         <div class="theo-mimg">${v.img?`<img src="assets/img/${v.img}?v=7" alt="">`:`<span>${v.emoji||'⭐'}</span>`}</div>
         <div class="theo-mlb">${v.label||m.title}</div>
       </button>`; }).join('')}</div>
@@ -479,8 +500,8 @@ function petItemClick(i,btn){
     const resta = FEED_MAX_DIA - (state.fedToday||0);
     // o preço e o que resta aparecem NO botão: a criança precisa ver a regra antes de
     // tocar, não descobrir batendo num toast de erro.
-    if(resta<=0){ toast('O Davi já comeu bastante hoje! 🥖 Volte amanhã'); return; }
-    if((state.coins||0) < FEED_CUSTO){ toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} 🥖`); return; }
+    if(resta<=0){ toast('O Davi já comeu bastante hoje! {pao} Volte amanhã'); return; }
+    if((state.coins||0) < FEED_CUSTO){ toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} {pao}`); return; }
     btn.classList.add('sel'); foodSel=i;
     // burrinho fica ANSIOSO (boca aberta) esperando a comida — igual ao nativo
     const pet=$('#pet'); if(pet) pet.classList.add('eager');
@@ -488,7 +509,7 @@ function petItemClick(i,btn){
     // o ✕ vem ANTES do contador: o contador é display:block e quebraria a linha,
     // jogando o ✕ pra baixo do botão. "ainda pode 3x" em vez de "3 de 3", que se lê
     // como se as três já tivessem sido usadas.
-    $('#feedwrap').innerHTML=`<button class="feed-btn" onclick="feedPet()">Alimentar · ${FEED_CUSTO} 🥖</button>
+    $('#feedwrap').innerHTML=`<button class="feed-btn" onclick="feedPet()">Alimentar · ${FEED_CUSTO} <i class="pao"></i></button>
       <button class="feed-cancel" aria-label="Cancelar" onclick="cancelFeed()">✕</button>
       <span class="feed-left">${resta===1 ? 'última de hoje' : `ainda pode ${resta}x hoje`}</span>`;
   }
@@ -508,13 +529,13 @@ function cancelFeed(){
 const FEED_CUSTO = 5, FEED_MAX_DIA = 3;
 function feedPet(){
   // as travas vêm ANTES de qualquer animação — senão o Davi mastiga e nada acontece
-  if((state.fedToday||0) >= FEED_MAX_DIA){ cancelFeed(); toast('O Davi já comeu bastante hoje! 🥖 Volte amanhã'); return; }
-  if((state.coins||0) < FEED_CUSTO){ cancelFeed(); toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} 🥖`); return; }
+  if((state.fedToday||0) >= FEED_MAX_DIA){ cancelFeed(); toast('O Davi já comeu bastante hoje! {pao} Volte amanhã'); return; }
+  if((state.coins||0) < FEED_CUSTO){ cancelFeed(); toast(`Faltam pãezinhos! Precisa de ${FEED_CUSTO} {pao}`); return; }
   $('#feedwrap').innerHTML=''; $('#petbar').querySelectorAll('.it').forEach(b=>b.classList.remove('sel'));
   const pet=$('#pet'); if(pet){ pet.classList.remove('eager'); pet.classList.add('chew'); }
   setPetFace('happy');                                  // mastigando, feliz
   state.coins-=FEED_CUSTO; state.fedToday=(state.fedToday||0)+1;
-  toast(`O Davi ficou feliz! −${FEED_CUSTO} 🥖  +5 XP`); state.xp+=5; checkLevel(); save(); spawnFeedFx();
+  toast(`O Davi ficou feliz! −${FEED_CUSTO} {pao}  +5 XP`); state.xp+=5; checkLevel(); save(); spawnFeedFx();
   setTimeout(()=>{ const p=$('#pet'); if(p){ p.classList.remove('chew'); p.classList.add('happy');
     setPetFace('relaxed'); setTimeout(()=>p&&p.classList.remove('happy'),500); } }, 950);  // satisfeito (olhos fechados)
   setTimeout(()=>{ if(TAB==='theo') screenTheo(); }, 1950);  // re-render: volta ao normal + atualiza XP + reinicia blink
@@ -682,29 +703,76 @@ function renderOutfits(){
       <div class="outfits-grid">${
         (outfitsTab==='outfits' ? OUTFITS : DECORATIONS).map(o=>{
           const owned=(o.owned||(state.owned&&state.owned[o.id]));
-          const eq = outfitsTab==='outfits' ? (state.outfit===o.id) : (state.decoration===o.id);
+          // sem decoração salva, quem está ativo é o quarto padrão
+          const eq = outfitsTab==='outfits' ? (state.outfit===o.id) : ((state.decoration||'padrao')===o.id);
           return `<button class="of-card ${eq?'equipped':''}" data-id="${o.id}" onclick="buyItem('${outfitsTab}','${o.id}',${o.price||0})">
-            <div class="of-emoji">${outfitsTab==='outfits'?`<span class="of-thumb" style="background-image:url('assets/img/pet_donkey_${o.id}.webp?v=100')"></span>`:o.emoji}</div>
+            <div class="of-emoji"><span class="of-thumb" style="background-image:url('assets/img/${outfitsTab==='outfits'?`pet_donkey_${o.id}.webp?v=100`:`${o.img}?v=168`}')"></span></div>
             ${owned?`<span class="of-owned">✓</span>`:``}
-            ${eq?`<span class="of-eq">${outfitsTab==='outfits'?'vestida':'ativa'}</span>`:(owned?``:`<span class="of-price">${o.price} 🥖</span>`)}
+            ${eq?`<span class="of-eq">${outfitsTab==='outfits'?'vestida':'ativa'}</span>`:(owned?``:`<span class="of-price">${o.price} <i class="pao"></i></span>`)}
           </button>`; }).join('')
       }</div>
     </div>`,'outfits');
   dressDonkey();
 }
 function setOutfitsTab(t){ outfitsTab=t; renderOutfits(); }
+/* Troca de decoração com fade. background-image não é animável em CSS, então o
+   crossfade é feito em três tempos: apaga (opacity 0), troca a classe com a tela já
+   apagada, acende. Antes a troca era um corte seco no meio da cena.
+   Mexe nas classes dos elementos VIVOS — re-renderizar recriaria o nó e a transição
+   não teria de onde partir. */
+function aplicarDeco(id){
+  const antes=state.decoration||'padrao';
+  if(id==='padrao') id=null;                     // padrão = sem decoração salva
+  state.decoration=id; save();
+  // a tela e o cabeçalho entram junto: as vars --theo-sky-* deles seguem o ambiente,
+  // senão o cenário laranja encosta direto no azul do rodapé.
+  const novo=id||'padrao';
+  if(antes===novo) return;
+
+  // tela e cabeçalho: só trocar a classe já basta, o background tem transition
+  [elScreen, elHdr].forEach(function(el){
+    if(!el) return;
+    el.className=el.className.replace(/\s*deco-(?!fx\b)[a-z-]+/g,'')+' deco-'+novo;
+  });
+
+  /* A CENA usa DUAS camadas. Com uma só, apagar revelava o quarto base por baixo
+     antes do novo entrar — trocar Neon por Natal dava um flash azul no meio, que é
+     o que fazia a transição parecer forçada. Agora a camada nova entra POR CIMA da
+     antiga, e a antiga só sai quando a nova já está opaca: em nenhum quadro aparece
+     o que está por baixo. */
+  Array.prototype.slice.call(document.querySelectorAll('.petscene')).forEach(function(cena){
+    // a própria cena guarda o ambiente: é o que diz se o presente precisa ser
+    // desenhado (cenários novos) ou se já existe um pintado na arte (quarto padrão)
+    cena.className=cena.className.replace(/\s*deco-(?!fx\b)[a-z-]+/g,'')+' deco-'+novo;
+    const atual=cena.querySelector(':scope > .deco-fx'); if(!atual) return;
+    const nova=document.createElement('div');
+    nova.className='deco-fx room-'+novo;
+    nova.style.opacity='0';
+    cena.insertBefore(nova, atual.nextSibling);   // por cima da atual, abaixo do Davi
+    void nova.offsetWidth;                         // força o reflow, senão não anima
+    nova.style.opacity='1';
+    setTimeout(function(){
+      if(atual.parentNode) atual.parentNode.removeChild(atual);
+      nova.style.opacity='';
+    }, 440);
+  });
+  // o painel de decorações usa ::after, que não empilha — troca direta
+  Array.prototype.slice.call(document.querySelectorAll('.mood-bg-room')).forEach(function(el){
+    el.className=el.className.replace(/\s*deco-(?!fx\b)[a-z-]+/g,'')+' deco-'+novo;
+  });
+}
 function buyItem(kind,id,price){
   state.owned=state.owned||{};
   const data=(kind==='outfits'?OUTFITS:DECORATIONS).find(o=>o.id===id);
   const already=(data&&data.owned)||state.owned[id];
   if(!already){
-    if(state.coins<price){ toast('Moedas insuficientes 🥖'); return; }
+    if(state.coins<price){ toast('Moedas insuficientes {pao}'); return; }
     state.coins-=price; state.owned[id]=true;
     toast(`✓ ${kind==='outfits'?'Roupa':'Decoração'} adquirida!`);
   }
   let justDressed=false;
   if(kind==='decoration'){
-    state.decoration=id; if(already) toast('✓ Decoração aplicada!');
+    aplicarDeco(id); if(already) toast('✓ Decoração aplicada!');
   } else {
     // ROUPAS: uma de cada vez — comprar já veste; tocar de novo na peça vestida tira.
     if(state.outfit===id){ state.outfit=null; toast('Roupa removida'); }
@@ -769,7 +837,7 @@ function openDailyRewards(){
         const rd=state.rewardDay||1;
         return `<div class="rw-card ${r.day<rd?'claimed':''} ${r.day===rd?'today':''}">
           <div class="rw-day">${r.label}</div>
-          <div class="rw-emoji">${r.emoji}</div>
+          <div class="rw-emoji">${r.ic==='gift'?'<i class="rw-gift"></i>':`<i class="pao rw-p${r.pao||1}"></i>`}</div>
           <div class="rw-amount">${r.amount}</div>
         </div>`; }).join('')}</div>
       <button class="rw-claim" ${state.dailyClaimedDate===dayKey()?'disabled':''} onclick="claimDaily()">${state.dailyClaimedDate===dayKey()?'Volte amanhã 🎁':'Resgatar'}</button>
@@ -783,7 +851,7 @@ function claimDaily(){
   state.coins+=amt; state.dailyClaimedDate=today;
   state.rewardDay = rd>=DAILY_REWARDS.length ? 1 : rd+1;          // avança a escada (cicla no fim)
   save();
-  toast(`+${amt} 🥖 resgatados!`);
+  toast(`+${amt} {pao} resgatados!`);
   openDailyRewards();                                            // re-renderiza com o novo estado
 }
 
@@ -1120,6 +1188,7 @@ function finishPlay(id){ if(_finished) return; _finished=true; setTimeout(()=>_f
     state.coins += (m && m.reward) || 10;
     state.xp += 10; checkLevel();
   }
+  try{ kidStats().stories++; }catch(_){ }   // conta pra criança do perfil ativo, toda vez
   save();  // marca feito HOJE + credita 1x POR DIA
   ratingScreen(id); }
 
@@ -1232,8 +1301,50 @@ function setTimer(o){ sleepTimer=o; $('#timer').querySelectorAll('.o').forEach(b
    PROFILE
    ============================================================ */
 let profTab='stats';
+/* ===== ESTATÍSTICAS POR CRIANÇA =================================================
+   Eram globais: `missionsDone.length*4` minutos e `missionsDone.length` histórias,
+   os MESMOS números em todos os perfis. Criar o segundo filho mostrava o histórico
+   do primeiro. E os "minutos" eram um multiplicador inventado — nada media áudio.
+   Agora cada perfil tem o seu contador, e o tempo é o que tocou de verdade. */
+function kidStats(i){
+  i = (i===undefined) ? (state.profile||0) : i;
+  state.kid = state.kid || {};
+  return (state.kid[i] = state.kid[i] || { secs:0, stories:0 });
+}
+/* Migração: quem já usava viu "20 minutos / 5 Histórias". Zerar seria apagar o que a
+   mãe já tinha visto, então o histórico global vira o da PRIMEIRA criança (que é de
+   quem ele era, na prática — o app só tinha um perfil de fato). */
+if(!state.kidV){
+  try{
+    var _k0 = kidStats(0);
+    if(!_k0.stories && !_k0.secs){
+      _k0.stories = (state.missionsDone||[]).length;
+      _k0.secs = _k0.stories * 4 * 60;      // mantém o número que ela já via
+    }
+  }catch(_){ }
+  state.kidV = 1; save();
+}
+/* Tempo REAL de escuta. 'timeupdate' não borbulha, então escuto na fase de captura,
+   que passa pelo document antes de chegar no <audio>. Só conta delta pra frente e
+   menor que 2s: pular a faixa não vira "tempo de qualidade". */
+(function(){
+  var acc=0;
+  document.addEventListener('timeupdate', function(e){
+    var a=e.target;
+    if(!a || a.tagName!=='AUDIO' || a.paused) return;
+    var t=a.currentTime||0, d=t-(a.__ultimo||0); a.__ultimo=t;
+    if(d<=0 || d>2) return;                 // seek, loop ou primeiro tick
+    kidStats().secs += d;
+    acc += d;
+    if(acc>=15){ acc=0; save(); }           // salva a cada ~15s, não a cada tick
+  }, true);
+})();
 /* avatar: foto do perfil (se a pessoa tirou) ou o emoji padrão */
-function avInner(i){ const ph=state.photos&&state.photos[i]; return ph?`<img src="${ph}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`:PROFILES[i].avatar; }
+/* sem estilo inline: o recorte é uma regra só (.av-img), igual nos quatro lugares
+   onde a foto aparece — cabeçalho, seletor de perfil, lista de filhos e Minha conta */
+/* sem estilo inline: o recorte é uma regra só (.av-img), igual nos quatro lugares
+   onde a foto aparece — cabeçalho, seletor de perfil, lista de filhos e Minha conta */
+function avInner(i){ const ph=state.photos&&state.photos[i]; return ph?`<img class="av-img" src="${ph}" alt="">`:PROFILES[i].avatar; }
 function triggerPhoto(){ const inp=document.getElementById('photo-input'); if(inp) inp.click(); }
 function onPhotoPicked(inp){ const f=inp.files&&inp.files[0]; if(!f) return; compressImage(f,d=>{ state.photos=state.photos||{}; state.photos[state.profile]=d; save(); openProfile(); }); }
 function openProfile(){
@@ -1241,7 +1352,7 @@ function openProfile(){
   elOv.style.display='block';
   elOv.innerHTML=`<div class="ov"><div class="ovtop"><button class="iconbtn" aria-label="Voltar" onclick="closeOverlays()">‹</button><b>Perfil</b><span style="width:40px"></span></div>
     <div class="body" style="padding:0 16px 40px">
-      <div class="coach">Crie um perfil personalizado pra outra criança</div>
+      ${state.coachPerfil ? '' : `<div class="coach">Crie um perfil personalizado pra outra criança<button class="coach-x" aria-label="Entendi" onclick="fecharCoach(this)">✕</button></div>`}
       <div class="avrow" style="margin-top:22px">
         ${activeKids().map(i=>`<button class="avitem ${i===state.profile?'on':''}" onclick="setProfile(${i})"><span class="a">${avInner(i)}</span>${i===state.profile?`<span class="av-cam" onclick="event.stopPropagation();triggerPhoto()" title="Tirar foto">📷</span>`:''}<span class="n">${escHtml(pname(i))}</span></button>`).join('')}
         ${activeKids().length<PROFILES.length?`<button class="avitem add" onclick="addKid()"><span class="a">＋</span><span class="n">Adicionar</span></button>`:''}
@@ -1256,9 +1367,9 @@ function openProfile(){
 }
 function profBody(p){
   if(profTab==='stats'){
-    const mins=state.missionsDone.length*4, st=state.missionsDone.length;
-    return `<div class="statcard"><b>${mins} minutos</b><div class="muted">de tempo de qualidade juntos</div></div>
-      <div class="statcard"><b>${st} ${st===1?'História':'Histórias'}</b><div class="muted">concluídas</div></div>`;
+    const k=kidStats(), mins=Math.floor((k.secs||0)/60), st=k.stories||0;
+    return `<div class="statcard"><b>${mins} ${mins===1?'minuto':'minutos'}</b><div class="muted">de tempo de qualidade juntos</div></div>
+      <div class="statcard"><b>${st} ${st===1?'História':'Histórias'}</b><div class="muted">${st?'concluídas':'concluídas — a primeira vem já já 💛'}</div></div>`;
   }
   return `<div class="field"><label>Qual o nome do seu filho(a)?</label><input id="pf-name" maxlength="24" placeholder="Nome da criança" value="${hasKid(state.profile)?escHtml(pname(state.profile)):''}"></div>
     <button class="btn" onclick="saveProfName()">Atualizar</button>
@@ -1274,6 +1385,14 @@ function addKid(){ for(var i=0;i<PROFILES.length;i++){ if(!hasKid(i)){ state.pro
 function removeKid(){ if(!confirm('Excluir o perfil de '+pname(state.profile)+'?')) return; if(state.names) delete state.names[state.profile]; if(state.photos) delete state.photos[state.profile]; state.profile=(activeKids()[0]!==undefined?activeKids()[0]:0); save(); render(); openProfile(); toast('Perfil removido'); }
 function setProfTab(t){ profTab=t; $('#prof-body').innerHTML=profBody(PROFILES[state.profile]); $('.ov .seg').querySelectorAll('button').forEach((b,i)=>b.classList.toggle('on',(i===0)===(t==='stats'))); }
 function setProfile(i){ state.profile=i; save(); openProfile(); }
+/* O balão era renderizado toda vez, sem botão e sem memória — não saía nunca, e
+   ainda cobria os avatares que ele mesmo estava explicando. */
+function fecharCoach(btn){
+  state.coachPerfil=1; save();
+  var c=btn&&btn.closest('.coach'); if(!c) return;
+  c.style.opacity='0'; c.style.transform='translateY(-6px)';
+  setTimeout(function(){ if(c.parentNode) c.parentNode.removeChild(c); }, 260);
+}
 
 /* ============================================================
    SETTINGS
@@ -1349,7 +1468,7 @@ function openAccount(){
   elOv.innerHTML=`<div class="ov"><div class="ovtop"><button class="iconbtn" aria-label="Voltar" onclick="openSettings()">‹</button><b>Minha conta</b><span style="width:40px"></span></div>
     <div class="body" style="padding:0 16px 40px">
       <div class="acct-head">
-        <div class="acct-av">${ph?`<img src="${ph}" alt="">`:'<span>👤</span>'}<span class="av-cam acct-cam" onclick="triggerAcctPhoto()">📷</span></div>
+        <div class="acct-av">${ph?`<img class="av-img" src="${ph}" alt="">`:'<span>👤</span>'}<span class="av-cam acct-cam" onclick="triggerAcctPhoto()">📷</span></div>
         <div class="acct-email">${escHtml(email)}</div>
       </div>
       <input type="file" id="acct-photo-input" accept="image/*" capture="user" style="display:none" onchange="onAcctPhoto(this)">
